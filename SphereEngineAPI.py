@@ -15,7 +15,6 @@ import urllib
 import urllib2
 
 
-
 class SphereEngineAPI:
     """SphereEngineAPI"""
 
@@ -42,26 +41,19 @@ class SphereEngineAPI:
         self.problems.setTimeouts(t)
 
 
-class SphereEngineCompilersAPI:
-    """SphereEngineCompilersAPI"""
 
-    def __init__(self, access_token, url=None):
-        self.version = 3
+class SphereEngineDefaultAPI:
+    """SphereEngineDefaultAPI"""
+
+    def __init__(self, access_token, url):
         self.access_token = access_token
         self.default_language_id = 11 # hardcoded C language
         self.use_timeouts = 1
+        self.baseurl = url
 
         self.timeout = {
             'test': 5,
-            'languages': 5,
-            'getSubmission': 5,
-            'sendSubmission': 10,
         }
-
-        if url == None:
-            self.baseurl = 'http://api.compilers.sphere-engine.com/api/' + str(self.version) + '/'
-        else:
-            self.baseurl = url
 
     #
     # Set default language
@@ -95,6 +87,20 @@ class SphereEngineCompilersAPI:
     def test(self):
         url = self.baseurl + 'test?access_token=' + self.access_token
         return SphereEngineREST.get_content(url, 'GET', self.getTimeout('test'))
+
+
+class SphereEngineCompilersAPI(SphereEngineDefaultAPI):
+    """SphereEngineCompilersAPI"""
+
+    def __init__(self, access_token, url=None):
+        self.version = 3
+        SphereEngineDefaultAPI.__init__(self, access_token, (url if url != None else 'http://api.compilers.sphere-engine.com/api/' + str(self.version) + '/'))
+        self.timeout = {
+            'test': 5,
+            'languages': 5,
+            'getSubmission': 5,
+            'sendSubmission': 10,
+        }
 
     #
     # Get available languages
@@ -150,15 +156,12 @@ class SphereEngineCompilersAPI:
         return SphereEngineREST.get_content(url, 'POST', self.getTimeout('sendSubmission'), data)
 
 
-class SphereEngineProblemsAPI:
+class SphereEngineProblemsAPI(SphereEngineDefaultAPI):
     """SphereEngineProblemsAPI"""
 
     def __init__(self, access_token, url=None):
         self.version = 3
-        self.access_token = access_token
-        self.default_language_id = 11 # hardcoded C language
-        self.use_timeouts = 1
-
+        SphereEngineDefaultAPI.__init__(self, access_token, (url if url != None else 'http://problems.sphere-engine.com/api/v' + str(self.version) + '/'))
         self.timeout = {
             'test': 5,
             'languages': 5,
@@ -167,44 +170,6 @@ class SphereEngineProblemsAPI:
             'problemsList': 5,
             'getProblem': 5,
         }
-
-        if url == None:
-            self.baseurl = 'http://problems.sphere-engine.com/api/v' + str(self.version) + '/'
-        else:
-            self.baseurl = url
-
-    #
-    # Set default language
-    #
-    # @param  integer      language       id of the language
-    #
-    def setDefaultLanguage(self, language):
-        self.default_language_id = int(language)
-
-    #
-    # Enable or disable timeouts for connections
-    #
-    # @param  bool      t       true to enable timeouts, false to disable timeouts
-    #
-    def setTimeouts(self, t):
-        self.use_timeouts = int(t)
-
-
-    def getTimeout(self, method):
-        if self.use_timeouts == 1:
-            return self.timeout[method];
-        else:
-            return 120
-
-    #
-    # Test API
-    #
-    # @return test message or error
-    #
-
-    def test(self):
-        url = self.baseurl + 'test?access_token=' + self.access_token
-        return SphereEngineREST.get_content(url, 'GET', self.getTimeout('test'))
 
     #
     # Get available languages
