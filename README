@@ -1,0 +1,4 @@
+Usage:
+from sphere_engine import SphereEngineClient
+client = SphereEngineClient('token')
+client...
