@@ -6,5 +6,5 @@ setup(name='Sphere Engine',
       author='Michal Koperkiewicz, Robert Lewon',
       author_email='contact@sphere-research.com',
       url='http://sphere-engine.com',
-      packages=['urllib', 'urllib2'],
+      packages=[],
      )
