@@ -27,7 +27,7 @@ TODO
 ## Documentation
 
 Usage:
-from sphere_engine import SphereEngine
+```from sphere_engine import SphereEngine
 api = SphereEngine('<token>', 'v3', '<endpoint>')
 client = api.execution_client()
 r = client.submissions.create('<source_code>', compilerId, '<input>')
@@ -36,3 +36,4 @@ print client.submissions.get(r['id'])
 client = api.problems_client()
 rrr = client.submissions.create('<problem_code>', '<source_code>', compilerId)
 print client.submissions.get(r['id'])
+```
