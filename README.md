@@ -28,7 +28,8 @@ TODO
 
 Usage:
 
-```from sphere_engine import SphereEngine
+```sh
+from sphere_engine import SphereEngine
 api = SphereEngine('<token>', 'v3', '<endpoint>')
 client = api.execution_client()
 r = client.submissions.create('<source_code>', compilerId, '<input>')
