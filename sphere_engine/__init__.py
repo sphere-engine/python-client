@@ -1,1 +1,3 @@
-from client import SphereEngineClient
+
+from api import SphereEngine
+from exceptions import SphereEngineException
