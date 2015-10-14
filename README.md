@@ -27,6 +27,7 @@ TODO
 ## Documentation
 
 Usage:
+
 ```from sphere_engine import SphereEngine
 api = SphereEngine('<token>', 'v3', '<endpoint>')
 client = api.execution_client()
