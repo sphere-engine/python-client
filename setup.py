@@ -4,7 +4,7 @@ import sys
 from setuptools import setup, find_packages
 
 NAME = "Sphere Engine"
-VERSION = "3.0.0"
+VERSION = "0.13"
 
 REQUIRES = ["urllib3 >= 1.10", "six >= 1.9", "certifi", "python-dateutil", 'requests']
 
