@@ -151,7 +151,7 @@ class ApiClient(object):
         
         try:
             data =  response_data.json()
-        except simplejson.scanner.JSONDecodeError, e:
+        except simplejson.scanner.JSONDecodeError as e:
             raise sphere_engine.SphereEngineException(e)
         
         return data

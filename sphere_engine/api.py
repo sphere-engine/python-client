@@ -14,9 +14,9 @@
 #  limitations under the License.
 #
 
-from apis.compilers import CompilersApi
-from apis.problems import ProblemsApi
-from api_client import ApiClient
+from .apis.compilers import CompilersApi
+from .apis.problems import ProblemsApi
+from .api_client import ApiClient
 
 class SphereEngine:
     """SphereEngineAPI"""

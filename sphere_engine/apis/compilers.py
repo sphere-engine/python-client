@@ -8,7 +8,7 @@
 # @license    link do licencji
 # @version    0.6
 
-from base import AbstractApi
+from .base import AbstractApi
 
 class CompilersApiSubmissions(AbstractApi):
     

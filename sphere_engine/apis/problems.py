@@ -10,7 +10,7 @@
 
 import requests
 
-from base import AbstractApi
+from .base import AbstractApi
 
 class ProblemsApi(AbstractApi):
     
