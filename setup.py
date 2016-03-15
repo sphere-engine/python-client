@@ -3,8 +3,8 @@
 import sys
 from setuptools import setup, find_packages
 
-NAME = "Sphere Engine"
-VERSION = "0.13"
+NAME = 'sphere-engine'
+VERSION = '0.13'
 
 REQUIRES = ["urllib3 >= 1.10", "six >= 1.9", "certifi", "python-dateutil", 'requests']
 
@@ -14,8 +14,9 @@ setup(
     description="Sphere Engine SDK",
     author='Michal Koperkiewicz, Robert Lewon',
     author_email="contact@sphere-research.com",
-    url="http://sphere-engine.com",
-    keywords=['Sphere Research Labs', 'Sphere Engine', 'Online Compiler', 'Problems', 'Online Judge'],
+    url="https://github.com/sphere-engine/python-client",
+    download_url="https://github.com/sphere-engine/python-client/archive/master.zip",
+    keywords=['Sphere Research Labs', 'Sphere Engine', 'Online Compiler', 'Problems', 'Online Judge', 'api', 'sdk', 'online compiler', 'spoj', 'ideone'],
     install_requires=REQUIRES,
     packages=find_packages(),
     include_package_data=True,
