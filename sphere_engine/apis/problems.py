@@ -8,47 +8,18 @@
 # @license    link do licencji
 # @version    0.6
 
-import requests
-
 from .base import AbstractApi
 
-class ProblemsApi(AbstractApi):
-    
-    problems = None
-    judges = None
-    submissions = None
-    
-    def __init__(self, api_client):
-        super(ProblemsApi, self).__init__(api_client)
-        self.problems = ProblemsApiProblems(api_client)
-        self.judges = ProblemsApiJudges(api_client)
-        self.submissions = ProblemsApiSubmissions(api_client)
-    
-    def test(self):
-        
-        resource_path = '/test'
-        method = 'GET'
-        
-        response = self.api_client.call_api(resource_path, method, )
-        return response
-    
-    def compilers(self):
-        """
-        Get available languages
-        :return list of languages or error
-        """
-        
-        resource_path = '/compilers'
-        method = 'GET'
-        
-        response = self.api_client.call_api(resource_path, 
-                                            method,
-        )
-        return response
+
     
 class ProblemsApiProblems(AbstractApi):
 
     def all(self, limit=10, offset=0):
+        """Get all problems
+        
+        :param limit: integer 
+        :param offset: integer
+        """
         
         resource_path = '/problems'
         method = 'GET'
@@ -61,6 +32,7 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, {}, query_params)
         
     def create(self, name, body, _type='bin', interactive=False, masterjudgeId=1001):
+        """Create problem"""
         
         resource_path = '/problems'
         method = 'POST'
@@ -309,3 +281,54 @@ class ProblemsApiSubmissions(AbstractApi):
         
         return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
     
+class ProblemsApi(AbstractApi):
+    
+    @property
+    def problems(self):
+        """
+        :return: ProblemsApiProblems """
+        return self._problems
+     
+    @property
+    def judges(self):
+        """
+        :return: ProblemsApiJudges """
+        return self._judges
+    
+    @property
+    def submissions(self):
+        """
+        :return: ProblemsApiSubmissions """
+        return self._submissions
+    
+    def __init__(self, api_client):
+        """
+        @param api_client: sphere_engine.api_client.ApiClient
+        """
+        super(ProblemsApi, self).__init__(api_client)
+        self._problems = ProblemsApiProblems(api_client)
+        self._judges = ProblemsApiJudges(api_client)
+        self._submissions = ProblemsApiSubmissions(api_client)
+    
+    def test(self):
+        """ Test API connection """
+        
+        resource_path = '/test'
+        method = 'GET'
+        
+        response = self.api_client.call_api(resource_path, method, )
+        return response
+    
+    def compilers(self):
+        """
+        Get available languages
+        :return list of languages or error
+        """
+        
+        resource_path = '/compilers'
+        method = 'GET'
+        
+        response = self.api_client.call_api(resource_path, 
+                                            method,
+        )
+        return response

@@ -86,12 +86,19 @@ class ApiClient(object):
 
     def create_host(self, api_type, endpoint, version):
         
-        host = '%s://%s.api.%s.sphere-engine.com/api/%s' % (
-            self.host_protocol,
-            endpoint,
-            'compilers' if api_type == 'compilers' else 'problems',
-            version
-        )
+        if '.' not in endpoint:
+            host = '%s://%s.%s.sphere-engine.com/api/%s' % (
+                self.host_protocol,
+                endpoint,
+                'compilers' if api_type == 'compilers' else 'problems',
+                version
+            )
+        else:
+            host = '%s://%s/api/%s' % (
+                self.host_protocol,
+                endpoint,
+                version
+            )
         
         return host
     
@@ -152,7 +159,7 @@ class ApiClient(object):
         try:
             data =  response_data.json()
         except simplejson.scanner.JSONDecodeError as e:
-            raise sphere_engine.SphereEngineException(e)
+            raise sphere_engine.exceptions.SphereEngineException(e)
         
         return data
 
@@ -175,7 +182,7 @@ class ApiClient(object):
         Makes the HTTP request using requests library.
         
         :raise requests.exceptions.RequestException
-        :raise sphere_engine.SphereEngineException
+        :raise sphere_engine.exceptions.SphereEngineException
         """
         
         r = None
@@ -216,7 +223,8 @@ class ApiClient(object):
             )
         
         if r.status_code not in range(200, 206):
-            raise sphere_engine.SphereEngineException(r.reason, r.status_code)
+            from sphere_engine.exceptions import SphereEngineException
+            raise SphereEngineException(r.reason, r.status_code)
         
         #print r.text
         #print r.status_code

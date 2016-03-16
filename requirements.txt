@@ -4,3 +4,4 @@ requests
 certifi
 python-dateutil
 simplejson
+coverage

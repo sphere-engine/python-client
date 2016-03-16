@@ -2,6 +2,7 @@ import os
 import sys
 import nose
 import unittest
+from sphere_engine import CompilersClientV3
 
 if os.environ.get('SE_URL_COMPILERS', None) != None and \
     os.environ.get('SE_URL_PROBLEMS', None) != None and \
@@ -10,27 +11,73 @@ if os.environ.get('SE_URL_COMPILERS', None) != None and \
     
     class TestCompilers(unittest.TestCase):
     
+        client = None
+    
         def setUp(self):
             
-            self.options = {
-                'SE_URL_COMPILERS': os.environ['SE_URL_COMPILERS'],
+            options = {
+                'module_compilers': os.environ['SE_URL_COMPILERS'],
                 'SE_URL_PROBLEMS': os.environ['SE_URL_PROBLEMS'],
                 'SE_ACCESS_TOKEN_COMPILERS': os.environ['SE_ACCESS_TOKEN_COMPILERS'],
                 'SE_ACCESS_TOKEN_PROBLEMS': os.environ['SE_ACCESS_TOKEN_PROBLEMS'],
             }
+            
+            self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_URL_COMPILERS'])
     
-        def test_upper(self):
-            self.assertEqual('foo'.upper(), 'FOO')
+        def test_auth_zonk(self):
+            
+            self.client = CompilersClientV3('wrong-access-token', os.environ['SE_URL_COMPILERS'])
+            ret = self.client.test()
     
-        def test_isupper(self):
-            self.assertTrue('FOO'.isupper())
-            self.assertFalse('Foo'.isupper())
+        def test_auth_ok(self):
+            
+            ret = self.client.test()
+            
+        def test_compilers(self):
+            
+            ret = self.client.compilers()
+            
+        def test_create_submission(self):
+            
+            try:
+                self.client.submissions.create('', None)
+                self.assertTrue(False, '#1')
+            except:
+                self.assertTrue(True, 'empty source code')
+            
+            try:
+                self.client.submissions.create('', 'abc')
+                self.assertTrue(False, '#1')
+            except:
+                self.assertTrue(True, 'empty source code')
+                
+            try:
+                self.client.submissions.create('abc', 'abc')
+                self.assertTrue(False, '#1')
+            except:
+                self.assertTrue(True, 'empty source code')
+                
+            try:
+                self.client.submissions.create('abc', '11')
+                self.assertTrue(False, '#1')
+            except:
+                self.assertTrue(True, 'empty source code')
+            
+            ret = self.client.submissions.create('abc', 11)
+            self.assertIsNotNone(ret, 'empty ret')
+            
+        def test_get_submission_notfound(self):    
+            
+            try:
+                self.client.submissions.get(-1)
+                self.assertTrue(False, 'code not exits!')
+            except:
+                self.assertTrue(True, 'code found?')
+            
+        def test_create_submission_sendandget(self):
+            
+            ret = self.client.submissions.create('abc', 1, '')
+            ret = self.client.submissions.get(ret['id'])
+            
     
-        def test_split(self):
-            s = 'hello world'
-            self.assertEqual(s.split(), ['hello', 'world'])
-            # check that s.split fails when the separator is not a string
-            with self.assertRaises(TypeError):
-                s.split(2)
-
 

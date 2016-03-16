@@ -5,3 +5,6 @@ example.py
 .pypirc
 dist
 *.egg-info
+test.sh
+cover
+.coverage

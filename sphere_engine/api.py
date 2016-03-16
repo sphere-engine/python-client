@@ -18,63 +18,44 @@ from .apis.compilers import CompilersApi
 from .apis.problems import ProblemsApi
 from .api_client import ApiClient
 
-class SphereEngine:
-    """SphereEngineAPI"""
-
-    __access_token = None
-    __endpoint = None
-    __version = None
-    __compilers_client = None
-    __problems_client = None
-
-    def __init__(self, access_token, version, endpoint=None, config=None):
-        self.__access_token = access_token
-        self.__endpoint = endpoint
-        self.__version = version
-
-    def execution_client(self):
-        
-        if self.__version not in ('v3', '3'):
-            raise ValueError('Invalid API version')
-        
-        if self.__compilers_client is None:
-            api_client = ApiClient(self.__access_token, self.__endpoint, self.__version, 'compilers')
-            self.__compilers_client = CompilersApi(api_client)
-            
-        return self.__compilers_client
-
-    def problems_client(self):
-        
-        if self.__version not in ('v3', '3'):
-            raise ValueError('Invalid API version')
-        
-        if self.__problems_client is None:
-            api_client = ApiClient(self.__access_token, self.__endpoint, self.__version, 'problems')
-            self.__problems_client = ProblemsApi(api_client)
+class CompilersClientV3(CompilersApi):
+    """
+    Client for Sphere Engine Compilers - version 3
+    """
     
-        return self.__problems_client
-"""
-class SphereEngineAbstractAPI:
+    _version = 'v3'
+    _access_token = None
+    _endpoint = None
+    
+    def __init__(self, access_token, endpoint, **options):
+        """
+        :param access_token: string
+        :param endpoint: string
+        """
+        
+        self._access_token = access_token
+        self._endpoint = endpoint
+        api_client = ApiClient(self._access_token, self._endpoint, self._version, 'compilers')
+        
+        CompilersApi.__init__(self, api_client)
 
-    def test(self):
-        url = self.baseurl + 'test?access_token=' + self.access_token
-        return self.get_content(url, 'GET', self.getTimeout('test'))
-
-    def get_content(self, url, type='GET', timeout=10, data={}):
-        if type == 'GET':
-            if data != {}:
-                url_values = urllib.urlencode(data)
-                url += '?' + url_values
-                data = {}
-
-        if data != {}:
-            content = urllib.urlencode(data)
-            req = urllib2.Request(url, content)
-        else:
-            req = urllib2.Request(url)
-        try:
-            response = urllib2.urlopen(req, timeout=timeout)
-            return response.read()
-        except urllib2.URLError, e:
-            return 'ERROR: timeout or other exception'
-"""
+class ProblemsClientV3(ProblemsApi):
+    """
+    Client for Sphere Engine Problems - version 3
+    """
+    
+    _version = 'v3'
+    _access_token = None
+    _endpoint = None
+    
+    def __init__(self, access_token, endpoint, **options):
+        """
+        :param access_token: string
+        :param endpoint: string
+        """
+        
+        self._access_token = access_token
+        self._endpoint = endpoint
+        api_client = ApiClient(self._access_token, self._endpoint, self._version, 'problems')
+                
+        ProblemsApi.__init__(self, api_client)

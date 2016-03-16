@@ -1,0 +1,8 @@
+#!/bin/sh
+
+SE_URL_COMPILERS= \
+SE_URL_PROBLEMS= \
+SE_ACCESS_TOKEN_COMPILERS= \
+SE_ACCESS_TOKEN_PROBLEMS= \
+coverage run nosetests
+coverage html -d cover
