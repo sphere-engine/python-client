@@ -14,20 +14,13 @@ if os.environ.get('SE_URL_COMPILERS', None) != None and \
         client = None
     
         def setUp(self):
-            
-            options = {
-                'module_compilers': os.environ['SE_URL_COMPILERS'],
-                'SE_URL_PROBLEMS': os.environ['SE_URL_PROBLEMS'],
-                'SE_ACCESS_TOKEN_COMPILERS': os.environ['SE_ACCESS_TOKEN_COMPILERS'],
-                'SE_ACCESS_TOKEN_PROBLEMS': os.environ['SE_ACCESS_TOKEN_PROBLEMS'],
-            }
-            
             self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_URL_COMPILERS'])
     
         def test_auth_zonk(self):
             
             self.client = CompilersClientV3('wrong-access-token', os.environ['SE_URL_COMPILERS'])
             ret = self.client.test()
+            self.assertTrue(False, 'Wrong auth')
     
         def test_auth_ok(self):
             

@@ -2,6 +2,7 @@ import os
 import sys
 import nose
 import unittest
+from sphere_engine import ProblemsClientV3
 
 if os.environ.get('SE_URL_COMPILERS', None) != None and \
     os.environ.get('SE_URL_PROBLEMS', None) != None and \
@@ -11,26 +12,17 @@ if os.environ.get('SE_URL_COMPILERS', None) != None and \
     class TestProblems(unittest.TestCase):
     
         def setUp(self):
+            self.client = ProblemsClientV3(os.environ['SE_ACCESS_TOKEN_PROBLEMS'], os.environ['SE_URL_PROBLEMS'])
+    
+        def test_auth_zonk(self):
             
-            self.options = {
-                'SE_URL_COMPILERS': os.environ['SE_URL_COMPILERS'],
-                'SE_URL_PROBLEMS': os.environ['SE_URL_PROBLEMS'],
-                'SE_ACCESS_TOKEN_COMPILERS': os.environ['SE_ACCESS_TOKEN_COMPILERS'],
-                'SE_ACCESS_TOKEN_PROBLEMS': os.environ['SE_ACCESS_TOKEN_PROBLEMS'],
-            }
+            self.client = ProblemsClientV3('wrong-access-token', os.environ['SE_ACCESS_TOKEN_PROBLEMS'])
+            ret = self.client.test()
+            #self.assertRaises(excClass, callableObj)
+            self.assertTrue(False, 'Wrong auth')
     
-        def test_upper(self):
-            self.assertEqual('foo'.upper(), 'FOO')
-    
-        def test_isupper(self):
-            self.assertTrue('FOO'.isupper())
-            self.assertFalse('Foo'.isupper())
-    
-        def test_split(self):
-            s = 'hello world'
-            self.assertEqual(s.split(), ['hello', 'world'])
-            # check that s.split fails when the separator is not a string
-            with self.assertRaises(TypeError):
-                s.split(2)
+        def test_auth_ok(self):
+            
+            ret = self.client.test()
 
 
