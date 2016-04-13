@@ -5,23 +5,21 @@ import unittest
 from sphere_engine import CompilersClientV3
 from sphere_engine.exceptions import SphereEngineException
 
-if os.environ.get('SE_URL_COMPILERS', None) != None and \
-    os.environ.get('SE_URL_PROBLEMS', None) != None and \
-    os.environ.get('SE_ACCESS_TOKEN_COMPILERS', None) != None and \
-    os.environ.get('SE_ACCESS_TOKEN_PROBLEMS', None) != None:
+if os.environ.get('SE_ENDPOINT_COMPILERS', None) != None and \
+    os.environ.get('SE_ACCESS_TOKEN_COMPILERS', None) != None:
     
     class TestCompilers(unittest.TestCase):
     
         client = None
     
         def setUp(self):
-            self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_URL_COMPILERS'])
+            self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_ENDPOINT_COMPILERS'])
     
         def test_auth_zonk(self):
             
             """
             with self.assertRaises(Exception):
-                self.client = CompilersClientV3('wrong-access-token', os.environ['SE_URL_COMPILERS'])
+                self.client = CompilersClientV3('wrong-access-token', os.environ['SE_ENDPOINT_COMPILERS'])
                 self.client.test()
             """
             pass
