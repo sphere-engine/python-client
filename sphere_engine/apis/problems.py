@@ -14,10 +14,15 @@ from sphere_engine.exceptions import SphereEngineException
 class ProblemsApiProblems(AbstractApi):
 
     def all(self, limit=10, offset=0):
-        """Get all problems
+        """ Get all problems
 
-        :param limit: integer
-        :param offset: integer
+        :param limit: number of problems to get (default 10)
+        :type limit: integer
+        :param offset: starting number (default 0)
+        :type offset: integer
+        :returns: list of problems
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
         """
 
         resource_path = '/problems'
@@ -31,10 +36,42 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, {}, query_params)
 
     def create(self, code, name, body='', _type='bin', interactive=False, masterjudgeId=1001):
-        """Create problem"""
+        """ Create a new problem
+
+        :param code: problem code
+        :type code: string
+        :param name: problem name
+        :type name: string
+        :param body: problem body
+        :type body: string
+        :param _type: problem type (default 'bin')
+        :type _type: string ('binary', 'min' or 'max')
+        :param interactive: interactive problem flag (default False)
+        :type interactive: bool
+        :param masterjudgeId: masterjudge id (default 1001, i.e. Score is % of correctly solved testcases)
+        :type masterjudgeId: integer
+        :returns: code of created problem
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 400 for empty problem code
+        :raises SphereEngineException: code 400 for empty problem name
+        :raises SphereEngineException: code 400 for not unique problem code
+        :raises SphereEngineException: code 400 for invalid problem code
+        :raises SphereEngineException: code 400 for invalid type
+        :raises SphereEngineException: code 404 for non existing masterjudge
+        """
 
         resource_path = '/problems'
         method = 'POST'
+
+        if code == '':
+            raise SphereEngineException('empty code', 400)
+
+        if name == '':
+            raise SphereEngineException('empty name', 400)
+
+        if _type not in ['min', 'max', 'bin', 'minimize', 'maximize', 'binary']:
+            raise SphereEngineException('wrong type', 400)
 
         post_params = {
            'code': code,
@@ -48,6 +85,15 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
     def get(self, code):
+        """ Retrieve an existing problem
+
+        :param code: problem code
+        :type code: string
+        :returns: problem details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 404 for non existing problem
+        """
 
         resource_path = '/problems/{code}'
         method = 'GET'
@@ -59,9 +105,39 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params)
 
     def update(self, code, name=None, body=None, _type=None, interactive=None, masterjudgeId=None, activeTestcases=None):
+        """ Update an existing problem
+
+        :param code: problem code
+        :type code: string
+        :param name: problem name (default None)
+        :type name: string
+        :param body: problem body (default None)
+        :type body: string
+        :param _type: problem type (default None)
+        :type _type: string ('binary', 'min' or 'max')
+        :param interactive: interactive problem flag (default None)
+        :type interactive: bool
+        :param masterjudgeId: masterjudge id (default None)
+        :type masterjudgeId: integer
+        :param activeTestcases: list of active testcases IDs (default None)
+        :type activeTestcases: List[integer]
+        :returns: code of created problem
+        :rtype: json
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for modifying foreign problem
+        :raises SphereEngineException: code 400 for empty problem code
+        :raises SphereEngineException: code 400 for empty problem name
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing masterjudge
+        """
 
         if code == '':
-            raise SphereEngineException('Empty code', 400)
+            raise SphereEngineException('empty code', 400)
+
+        if name == '':
+            raise SphereEngineException('empty name', 400)
 
         path_params = {
            'code': code
@@ -77,7 +153,7 @@ class ProblemsApiProblems(AbstractApi):
             post_params['body'] = body
         if _type != None:
             if _type not in ['min', 'max', 'bin', 'minimize', 'maximize', 'binary']:
-                raise ValueError('Wrong type')
+                raise SphereEngineException('wrong type', 400)
             post_params['type'] = _type
         if interactive != None:
             post_params['interactive'] = 1 if interactive else 0
@@ -89,10 +165,33 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
     def updateActiveTestcases(self, code, activeTestcases):
+        """ Update active testcases related to the problem
+
+        :param code: problem code
+        :type code: string
+        :param activeTestcases: list of active testcases IDs
+        :type activeTestcases: List[integer]
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for modifying foreign problem
+        :raises SphereEngineException: code 400 for empty problem code
+        :raises SphereEngineException: code 404 for non existing problem
+        """
 
         self.update(code, activeTestcases=activeTestcases)
 
     def allTestcases(self, problemCode):
+        """ Retrieve list of problem testcases
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :returns: problem testcases
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for retrieving testcases of foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        """
 
         resource_path = '/problems/{problemCode}/testcases'
         method = 'GET'
@@ -103,7 +202,28 @@ class ProblemsApiProblems(AbstractApi):
 
         return self.api_client.call_api(resource_path, method, path_params)
 
-    def createTestcase(self, problemCode, _input, output, timelimit, judgeId, active=True):
+    def createTestcase(self, problemCode, _input='', output='', timelimit=1, judgeId=1, active=True):
+        """ Create a problem testcase
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :param _input: model input data (default '')
+        :type _input: string
+        :param output: model output data (default '')
+        :type output: string
+        :param timelimit: time limit in seconds (default 1)
+        :type timelimit: double
+        :param judgeId: judge id (default 1, i.e. Ignore extra whitespaces)
+        :type judgeId: integer
+        :param active: if test should be active (default True)
+        :type active: bool
+        :returns: number of created testcase
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for adding a testcase to foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing judge
+        """
 
         resource_path = '/problems/{problemCode}/testcases'
         method = 'POST'
@@ -123,6 +243,19 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
     def getTestcase(self, problemCode, number):
+        """ Retrieve problem testcase
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :param number: testcase number
+        :type number: integer
+        :returns: testcase details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for retrieving a testcase of foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing testcase
+        """
 
         resource_path = '/problems/{problemCode}/testcases/{number}'
         method = 'GET'
@@ -135,6 +268,30 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params)
 
     def updateTestcase(self, problemCode, number, _input=None, output=None, timelimit=None, judgeId=None, active=None):
+        """ Update the problem testcase
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :param number: testcase number
+        :type number: integer
+        :param _input: model input data (default None)
+        :type _input: string
+        :param output: model output data (default None)
+        :type output: string
+        :param timelimit: time limit in seconds (default None)
+        :type timelimit: double
+        :param judgeId: judge id (default None)
+        :type judgeId: integer
+        :param active: if test should be active (default None)
+        :type active: bool
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for adding a testcase to foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing testcase
+        :raises SphereEngineException: code 404 for non existing judge
+        """
 
         resource_path = '/problems/{problemCode}/testcases/{number}'
         method = 'PUT'
@@ -159,6 +316,19 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
     def deleteTestcase(self, problemCode, number):
+        """ Delete the problem testcase
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :param number: testcase number
+        :type number: integer
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for retrieving a testcase of foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing testcase
+        """
 
         resource_path = '/problems/{problemCode}/testcases/{number}'
         method = 'DELETE'
@@ -171,12 +341,28 @@ class ProblemsApiProblems(AbstractApi):
         return self.api_client.call_api(resource_path, method, path_params)
 
     def getTestcaseFile(self, problemCode, number, filename):
+        """ Retrieve a problem testcase file
+
+        :param problemCode: problem code
+        :type problemCode: string
+        :param number: testcase number
+        :type number: integer
+        :param filename: filename
+        :type filename: string
+        :returns: file content
+        :rtype: string
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for retrieving a testcase of foreign problem
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing testcase
+        :raises SphereEngineException: code 404 for non existing file
+        """
 
         resource_path = '/problems/{problemCode}/testcases/{number}/{filename}'
         method = 'GET'
 
         if filename not in ['input', 'output']:
-            raise SphereEngineException('Nonexisting file', 404)
+            raise SphereEngineException('nonexisting file', 404)
 
         path_params = {
             'problemCode': problemCode,
@@ -190,6 +376,16 @@ class ProblemsApiProblems(AbstractApi):
 class ProblemsApiJudges(AbstractApi):
 
     def all(self, limit=10, offset=0, type='testcase'):
+        """ List of all judges
+
+        :param limit: number of judges to get (default 10)
+        :type limit: integer
+        :param offset: starting number (default 0)
+        :type offset: integer
+        :returns: list of judges
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        """
 
         resource_path = '/judges'
         method = 'GET'
@@ -202,9 +398,28 @@ class ProblemsApiJudges(AbstractApi):
         return self.api_client.call_api(resource_path, method, {}, query_params)
 
     def create(self, sourceCode, compilerId=1, type='testcase', name=''):
+        """ Create a new judge
+
+        :param sourceCode: judge source code
+        :type sourceCode: string
+        :param compilerId: compiler id (default 1, i.e. C++)
+        :type compilerId: integer
+        :param type: judge type
+        :type type: string ('testcase' or 'master')
+        :param name: judge name (default '')
+        :type name: string
+        :returns: id of created judge
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 400 for empty source code
+        :raises SphereEngineException: code 404 for non existing compiler
+        """
 
         resource_path = '/judges'
         method = 'POST'
+
+        if sourceCode == '':
+            raise SphereEngineException("empty source", 400)
 
         post_params = {
             'source': sourceCode,
@@ -216,6 +431,16 @@ class ProblemsApiJudges(AbstractApi):
         return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
     def get(self, _id):
+        """ Get judge details
+
+        :param _id: judge id
+        :type _id: integer
+        :returns: judge details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for retrieving foreign judge details
+        :raises SphereEngineException: code 404 for non existing judge
+        """
 
         resource_path = '/judges/{id}'
         method = 'GET'
@@ -226,13 +451,34 @@ class ProblemsApiJudges(AbstractApi):
 
         return self.api_client.call_api(resource_path, method, host_params, )
 
-    def update(self, id, sourceCode=None, compilerId=None, name=None):
+    def update(self, _id, sourceCode=None, compilerId=None, name=None):
+        """ Update judge
+
+        :param _id: judge id
+        :type _id: integer
+        :param sourceCode: judge source code(default None)
+        :type sourceCode: string
+        :param compilerId: compiler id (default None)
+        :type compilerId: integer
+        :param name: judge name (default None)
+        :type name: string
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 403 for modifying foreign judge
+        :raises SphereEngineException: code 400 for empty source code
+        :raises SphereEngineException: code 404 for non existing judge
+        :raises SphereEngineException: code 404 for non existing compiler
+        """
 
         resource_path = '/judges/{id}'
         method = 'PUT'
 
+        if sourceCode != None and sourceCode == '':
+            raise SphereEngineException('empty source', 400)
+
         host_params = {
-            'id': id
+            'id': _id
         }
 
         post_params = {}
@@ -248,53 +494,63 @@ class ProblemsApiJudges(AbstractApi):
 
 class ProblemsApiSubmissions(AbstractApi):
 
-    #
-    # Get submission by ID
-    #
-    # @param  integer   id                    id of the submission
-    #
-    # @return submission info as dictionary or error
-    #
-    def get(self, id):
+    def get(self, _id):
+        """ Fetch submission details
+
+        :param id: submission id
+        :type _id: integer
+        :returns: submission details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 404 for non existing submission
+        """
 
         resource_path = '/submissions/{id}'
         method = 'GET'
 
         host_params = {
-          'id': id
+          'id': _id
         }
 
         return self.api_client.call_api(resource_path, method, host_params, )
 
+    def create(self, problemCode, source, compilerId=None, userId=None):#, contestCode=None, private=False):
+        """ Create a new submission
 
-    #
-    # Send submission
-    #
-    # @param  string       problemCode       code of the problem
-    # @param  string       source            source code
-    # @param  integer      language          language id
-    # @param  string       contestCode       code of the contest
-    # @param  integer      userId            user ID
-    # @param  bool         private           flag for private submissions
-    #
-    # @return submission id or error
-    #
-    def create(self, problemCode, source, compilerId=None, contestCode=None, userId=None, private=False):
+        :param problemCode: problem code
+        :type problemCode: string
+        :param source: submission source code
+        :type source: string
+        :param compilerId: compiler id
+        :type compilerId: integer
+        :param userId: user id
+        :type userId: integer
+        :returns: id of created submission
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 400 for empty source code
+        :raises SphereEngineException: code 404 for non existing problem
+        :raises SphereEngineException: code 404 for non existing user
+        :raises SphereEngineException: code 404 for non existing compiler
+        """
 
         resource_path = '/submissions'
         method = 'POST'
+
+        if source == '':
+            raise SphereEngineException('empty source', 400)
 
         post_params = {
             'problemCode': problemCode,
             'compilerId': compilerId,
             'source': source
         }
-        if contestCode:
-            post_params['contestCode'] = contestCode
-        if userId:
+        if userId != None:
             post_params['userId'] = userId
-        if private:
-            post_params['private'] = int(private)
+        #if contestCode != None:
+        #    post_params['contestCode'] = contestCode
+        #if private:
+        #    post_params['private'] = int(private)
 
         return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
@@ -328,7 +584,12 @@ class ProblemsApi(AbstractApi):
         self._submissions = ProblemsApiSubmissions(api_client)
 
     def test(self):
-        """ Test API connection """
+        """ Test API connection
+
+        :returns: test message
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        """
 
         resource_path = '/test'
         method = 'GET'
@@ -337,9 +598,11 @@ class ProblemsApi(AbstractApi):
         return response
 
     def compilers(self):
-        """
-        Get available languages
-        :return list of languages or error
+        """ Get available compilers
+
+        :returns: list of compilers
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
         """
 
         resource_path = '/compilers'

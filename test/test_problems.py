@@ -101,7 +101,7 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(e.code == 400)
 
         def test_create_problem_method_nonexisting_masterjudge(self):
-            nonexistingMasterjudgeId = 9999;
+            nonexistingMasterjudgeId = 9999
             try:
                 self.client.problems.create(
                     'UNIQUE_CODE',
@@ -149,7 +149,7 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(e.code == 404)
 
         def test_update_problem_method_nonexisting_masterjudge(self):
-            nonexistingMasterjudgeId = 9999;
+            nonexistingMasterjudgeId = 9999
             try:
                 self.client.problems.update(
                     'TEST',
@@ -212,8 +212,8 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
         def test_create_problem_testcase_method_success(self):
             r = str(randrange(1000000,9999999)) + str(randrange(1000000,9999999)) # 14-digits random string
             # create problem to create testcases
-            problem_code = 'UT' + r;
-            problem_name = 'UT' + r;
+            problem_code = 'UT' + r
+            problem_name = 'UT' + r
             self.client.problems.create(problem_code, problem_name)
 
             self.client.problems.createTestcase(problem_code, 'in0', 'out0', 10, 2, 0)
@@ -233,7 +233,7 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(e.code == 404)
 
         def test_create_problem_testcase_method_nonexisting_judge(self):
-            nonexistingJudge = 9999;
+            nonexistingJudge = 9999
             try:
                 self.client.problems.createTestcase('TEST', 'in0', 'out0', 10, nonexistingJudge, 1)
                 self.assertTrue(False)
@@ -280,13 +280,13 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
 
         def test_update_problem_testcase_method_nonexisting_testcase(self):
             try:
-                self.client.problems.updateTestcase('TEST', 1, 'updated input');
+                self.client.problems.updateTestcase('TEST', 1, 'updated input')
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
 
         def test_update_problem_testcase_method_nonexisting_judge(self):
-            nonexistingJudge = 9999;
+            nonexistingJudge = 9999
             try:
                 self.client.problems.updateTestcase('TEST', 0, 'updated input', 'updated output', 1, nonexistingJudge, 0)
                 self.assertTrue(False)
@@ -373,10 +373,10 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(e.code == 404)
 
         def test_create_judge_method_success(self):
-            judge_source = 'source';
-            judge_compiler = 1;
-            judge_type = 'testcase';
-            judge_name = 'UT judge';
+            judge_source = 'source'
+            judge_compiler = 1
+            judge_type = 'testcase'
+            judge_name = 'UT judge'
 
             response = self.client.judges.create(
                 judge_source,
@@ -394,13 +394,13 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
 
         def test_create_judge_method_empty_source(self):
             try:
-                self.client.judges.create('', 1, 'testcase', '');
+                self.client.judges.create('', 1, 'testcase', '')
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 400)
 
         def test_create_judge_method_nonexisting_compiler(self):
-            nonexistingCompiler = 9999;
+            nonexistingCompiler = 9999
             try:
                 self.client.judges.create('nonempty source', nonexistingCompiler, 'testcase', '')
                 self.assertTrue(False)
@@ -507,7 +507,7 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
         def test_create_submission_method_nonexisting_compiler(self):
             nonexistingCompiler = 9999
             try:
-                self.client.submissions.create('TEST', 'nonempty source', nonexistingCompiler);
+                self.client.submissions.create('TEST', 'nonempty source', nonexistingCompiler)
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
