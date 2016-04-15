@@ -43,16 +43,16 @@ except ImportError:
     from urllib import quote
 
 class ApiClient(object):
-    
+
     access_token = None
     endpoint = None
     version = None
-    
+
     host = None
     host_protocol = 'https'
-    
+
     default_headers = {}
-    
+
     """
     Generic API client for Swagger client library builds.
 
@@ -65,27 +65,27 @@ class ApiClient(object):
     Ref: https://github.com/swagger-api/swagger-codegen
     Do not edit the class manually.
 
-    
+
     """
     def __init__(self, access_token, endpoint, version, api_type):
         """
         Constructor of the class.
-        
+
         :param host: The base path for the server to call.
         :param header_name: a header to pass when making calls to the API.
         :param header_value: a header value to pass when making calls to the API.
         """
-        
+
         self.access_token = access_token
         self.endpoint = endpoint
         self.version = version
         self.host = self.create_host(api_type, endpoint, version)
-        
+
         # Set default User-Agent.
         self.user_agent = 'SphereEngine/3.0.0'
 
     def create_host(self, api_type, endpoint, version):
-        
+
         if '.' not in endpoint:
             host = '%s://%s.%s.sphere-engine.com/api/%s' % (
                 self.host_protocol,
@@ -99,16 +99,16 @@ class ApiClient(object):
                 endpoint,
                 version
             )
-        
+
         return host
-    
+
     def call_api(self, resource_path, method,
                    path_params=None, query_params=None, header_params=None,
                    post_params=None, files=None,
                    response_type=None, auth_settings=None, callback=None):
         """
         Call method
-        
+
             @param resource_path: sdfasdf
             :param resource_path dfawef
             :param method GET|POST
@@ -155,12 +155,15 @@ class ApiClient(object):
                                      query_params=query_params,
                                      headers=header_params,
                                      post_params=post_params)#, body=body)
-        
+
         try:
-            data =  response_data.json()
+            if response_type == 'file':
+                data = response_data.text
+            else:
+                data = response_data.json()
         except simplejson.scanner.JSONDecodeError as e:
             raise sphere_engine.exceptions.SphereEngineException(e)
-        
+
         return data
 
         """
@@ -180,65 +183,65 @@ class ApiClient(object):
                 post_params=None, body=None):
         """
         Makes the HTTP request using requests library.
-        
+
         :raise requests.exceptions.RequestException
         :raise sphere_engine.exceptions.SphereEngineException
         """
-        
+
         r = None
-        
+
         if method == "GET":
             r = requests.get(url, params=query_params, headers=headers)
-        
+
         elif method == "HEAD":
             r = requests.head(url, params=query_params, headers=headers)
-        
+
         #elif method == "OPTIONS":
         #    return self.rest_client.OPTIONS(url,
         #                                    query_params=query_params,
         #                                    headers=headers,
         #                                    post_params=post_params,
         #                                    body=body)
-        
+
         elif method == "POST":
             r = requests.post(url, params=query_params, headers=headers, data=post_params, )
-            
+
         elif method == "PUT":
             r = requests.put(url, params=query_params, headers=headers, data=post_params, )
-        
+
         #elif method == "PATCH":
         #    return self.rest_client.PATCH(url,
         #                                  query_params=query_params,
         #                                  headers=headers,
         #                                  post_params=post_params,
         #                                  body=body)
-        
+
         elif method == "DELETE":
             r = requests.delete(url, params=query_params, headers=headers)
-        
+
         else:
             raise ValueError(
                 "http method must be `GET`, `HEAD`,"
                 " `POST`, `PATCH`, `PUT` or `DELETE`."
             )
-        
+
         if r.status_code not in range(200, 206):
             from sphere_engine.exceptions import SphereEngineException
             raise SphereEngineException(r.reason, r.status_code)
-        
+
         #print r.text
         #print r.status_code
-        
+
         return r
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
+
+
+
+
+
+
+
 
 
 
@@ -264,7 +267,7 @@ class ApiClient(object):
     def set_default_header(self, header_name, header_value):
         self.default_headers[header_name] = header_value
 
-    
+
 
     def to_path_value(self, obj):
         """
@@ -345,4 +348,3 @@ class ApiClient(object):
             data = response.data
 
         return data
-        

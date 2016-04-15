@@ -176,7 +176,7 @@ class ProblemsApiProblems(AbstractApi):
         method = 'GET'
 
         if filename not in ['input', 'output']:
-            raise ValueError('Wrong filename')
+            raise SphereEngineException('Nonexisting file', 404)
 
         path_params = {
             'problemCode': problemCode,
@@ -184,7 +184,7 @@ class ProblemsApiProblems(AbstractApi):
             'filename': filename
         }
 
-        return self.api_client.call_api(resource_path, method, path_params)
+        return self.api_client.call_api(resource_path, method, path_params, response_type='file')
 
 
 class ProblemsApiJudges(AbstractApi):
@@ -236,11 +236,11 @@ class ProblemsApiJudges(AbstractApi):
         }
 
         post_params = {}
-        if sourceCode:
+        if sourceCode != None:
             post_params['source'] = sourceCode
-        if compilerId:
+        if compilerId != None:
             post_params['compilerId'] = compilerId
-        if name:
+        if name != None:
             post_params['name'] = name
 
         return self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)

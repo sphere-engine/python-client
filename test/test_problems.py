@@ -356,3 +356,166 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
+
+        def test_all_judges_method_success(self):
+            self.assertEquals(10, self.client.judges.all()['paging']['limit'])
+            self.assertEquals(11, self.client.judges.all(11)['paging']['limit'])
+
+        def  test_get_judge_method_success(self):
+            self.assertEquals(1, self.client.judges.get(1)['id'])
+
+        def test_get_judge_method_nonexisting_judge(self):
+            nonexistingJudge = 9999
+            try:
+                self.client.judges.get(nonexistingJudge)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_create_judge_method_success(self):
+            judge_source = 'source';
+            judge_compiler = 1;
+            judge_type = 'testcase';
+            judge_name = 'UT judge';
+
+            response = self.client.judges.create(
+                judge_source,
+                judge_compiler,
+                judge_type,
+                judge_name)
+            judge_id = response['id']
+            self.assertTrue(judge_id > 0, 'Creation method should return new judge ID')
+            j = self.client.judges.get(judge_id)
+            self.assertEquals(judge_source, j['source'], 'Judge source')
+            self.assertEquals(str(judge_compiler), j['compiler']['id'], 'Judge compiler ID')
+            self.assertEquals(judge_type, j['type'], 'Judge type')
+            self.assertEquals(judge_name, j['name'], 'Judge name')
+
+
+        def test_create_judge_method_empty_source(self):
+            try:
+                self.client.judges.create('', 1, 'testcase', '');
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 400)
+
+        def test_create_judge_method_nonexisting_compiler(self):
+            nonexistingCompiler = 9999;
+            try:
+                self.client.judges.create('nonempty source', nonexistingCompiler, 'testcase', '')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_update_judge_method_success(self):
+            response = self.client.judges.create('source', 1, 'testcase', 'UT judge')
+            judge_id = response['id']
+
+            new_judge_source = 'updated source'
+            new_judge_compiler = 11
+            new_judge_name = 'UT judge updated'
+
+            self.client.judges.update(
+                    judge_id,
+                    new_judge_source,
+                    new_judge_compiler,
+                    new_judge_name)
+
+            j = self.client.judges.get(judge_id)
+            self.assertEquals(new_judge_source, j['source'], 'Judge source')
+            self.assertEquals(str(new_judge_compiler), j['compiler']['id'], 'Judge compiler ID')
+            self.assertEquals(new_judge_name, j['name'], 'Judge name')
+
+        def test_update_judge_method_empty_source(self):
+            response = self.client.judges.create('source', 1, 'testcase', 'UT judge')
+            judgeId = response['id']
+            try:
+                self.client.judges.update(judgeId, '', 1, '')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 400)
+
+        def test_update_judge_method_nonexisting_judge(self):
+            nonexistingJudge = 99999999
+            try:
+                self.client.judges.update(nonexistingJudge, 'nonempty source', 1, '')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_update_judge_method_nonexisting_compiler(self):
+            response = self.client.judges.create('source', 1, 'testcase', 'UT judge')
+            judgeId = response['id']
+            nonexistingCompiler = 9999
+            try:
+                self.client.judges.update(judgeId, 'nonempty source', nonexistingCompiler, '')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_update_judge_method_foreign_judge(self):
+            response = self.client.judges.create('source', 1, 'testcase', 'UT judge')
+            judgeId = response['id']
+            nonexistingCompiler = 9999
+            try:
+                self.client.judges.update(1, 'nonempty source', 1, '')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 403)
+
+        def test_get_submission_method_success(self):
+            self.assertEquals(1, self.client.submissions.get(1)['id'])
+
+        def test_get_submission_method_nonexisting_submission(self):
+            nonexistingSubmission = 9999999999
+            try:
+                self.client.submissions.get(nonexistingSubmission)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_create_submission_method_success(self):
+            submission_problem_code = 'TEST'
+            submission_source = 'source'
+            submission_compiler = 1
+
+            response = self.client.submissions.create(
+                    submission_problem_code,
+                    submission_source,
+                    submission_compiler)
+            submission_id = response['id']
+            self.assertTrue(submission_id > 0, 'Creation method should return new submission ID')
+            s = self.client.submissions.get(submission_id)
+            self.assertEquals(submission_problem_code, s['problem']['code'], 'Submission problem code')
+            self.assertEquals(submission_source, s['source'], 'Submission source')
+            self.assertEquals(submission_compiler, s['compiler']['id'], 'Submission compiler ID')
+
+        def test_create_submission_method_empty_source(self):
+            try:
+                self.client.submissions.create('TEST', '', 1)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 400)
+
+        def test_create_submission_method_nonexisting_problem(self):
+            try:
+                self.client.submissions.create('NON_EXISTING_CODE', 'nonempty source', 1)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_create_submission_method_nonexisting_compiler(self):
+            nonexistingCompiler = 9999
+            try:
+                self.client.submissions.create('TEST', 'nonempty source', nonexistingCompiler);
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_create_submission_method_nonexisting_user(self):
+            nonexistingUser = 9999999999
+            try:
+                self.client.submissions.create('TEST', 'nonempty source', 1, nonexistingUser)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
