@@ -1,5 +1,5 @@
 """
-
+Example presents usage of the successful problems.get() API method
 """
 import os
 from sphere_engine import ProblemsClientV3
@@ -12,3 +12,4 @@ endpoint = os.environ['SE_ENDPOINT_PROBLEMS']
 client = ProblemsClientV3(accessToken, endpoint)
 
 # API usage
+response = client.problems.get('TEST')

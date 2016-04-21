@@ -1,17 +1,17 @@
 """
 Example presents complete error handling schema for calling API methods of
-Sphere Engine Problems API client
+Sphere Engine Compilers API client
 """
 import os
-from sphere_engine import ProblemsClientV3
+from sphere_engine import CompilersClientV3
 from sphere_engine.exceptions import SphereEngineException
 
 # define access parameters
-accessToken = os.environ['SE_ACCESS_TOKEN_PROBLEMS']
-endpoint = os.environ['SE_ENDPOINT_PROBLEMS']
+accessToken = os.environ['SE_ACCESS_TOKEN_COMPILERS']
+endpoint = os.environ['SE_ENDPOINT_COMPILERS']
 
 # initialization
-client = ProblemsClientV3(accessToken, endpoint)
+client = CompilersClientV3(accessToken, endpoint)
 
 # API usage
 try:

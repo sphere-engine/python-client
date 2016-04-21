@@ -1,5 +1,6 @@
 """
-
+Example presents usage of the successful initialization of
+Sphere Engine Problems API client
 """
 import os
 from sphere_engine import ProblemsClientV3
@@ -10,5 +11,3 @@ endpoint = os.environ['SE_ENDPOINT_PROBLEMS']
 
 # initialization
 client = ProblemsClientV3(accessToken, endpoint)
-
-# API usage

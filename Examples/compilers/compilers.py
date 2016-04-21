@@ -1,6 +1,5 @@
 """
-Example presents usage of the successful initialization of
-Sphere Engine Compilers API client
+Example presents usage of the successful compilers() API method
 """
 import os
 from sphere_engine import CompilersClientV3
@@ -11,3 +10,6 @@ endpoint = os.environ['SE_ENDPOINT_COMPILERS']
 
 # initialization
 client = CompilersClientV3(accessToken, endpoint)
+
+# API usage
+response = client.compilers()

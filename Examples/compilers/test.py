@@ -1,5 +1,5 @@
 """
-
+Example presents usage of the successful test() API method
 """
 import os
 from sphere_engine import CompilersClientV3
@@ -12,3 +12,4 @@ endpoint = os.environ['SE_ENDPOINT_COMPILERS']
 client = CompilersClientV3(accessToken, endpoint)
 
 # API usage
+response = client.test()

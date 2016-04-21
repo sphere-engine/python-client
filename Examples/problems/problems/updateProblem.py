@@ -1,5 +1,5 @@
 """
-
+Example presents usage of the successful problems.update() API method
 """
 import os
 from sphere_engine import ProblemsClientV3
@@ -12,3 +12,6 @@ endpoint = os.environ['SE_ENDPOINT_PROBLEMS']
 client = ProblemsClientV3(accessToken, endpoint)
 
 # API usage
+newProblemName = 'New example problem name'
+
+response = client.problems.update('EXAMPLE', newProblemName)
