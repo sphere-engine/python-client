@@ -6,8 +6,8 @@ import os
 from sphere_engine import CompilersClientV3
 
 # define access parameters
-accessToken = os.environ['SE_ACCESS_TOKEN_COMPILERS']
-endpoint = os.environ['SE_ENDPOINT_COMPILERS']
+accessToken = 'your_access_token'
+endpoint = 'compilers.sphere-engine.com'
 
 # initialization
 try:

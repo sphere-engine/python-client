@@ -5,8 +5,8 @@ import os
 from sphere_engine import ProblemsClientV3
 
 # define access parameters
-accessToken = os.environ['SE_ACCESS_TOKEN_PROBLEMS']
-endpoint = os.environ['SE_ENDPOINT_PROBLEMS']
+accessToken = 'your_access_token'
+endpoint = 'problems.sphere-engine.com'
 
 # initialization
 client = ProblemsClientV3(accessToken, endpoint)
