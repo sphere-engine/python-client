@@ -2,7 +2,6 @@
 Example presents connection error handling for
 Sphere Engine Problems API client
 """
-import os
 from sphere_engine import ProblemsClientV3
 
 # define access parameters

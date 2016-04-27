@@ -1,7 +1,6 @@
 """
 Example presents usage of the successful submissions.create() API method
 """
-import os
 from sphere_engine import CompilersClientV3
 
 # define access parameters

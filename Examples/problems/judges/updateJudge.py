@@ -1,7 +1,6 @@
 """
 Example presents usage of the successful judges.update() API method
 """
-import os
 from sphere_engine import ProblemsClientV3
 
 # define access parameters

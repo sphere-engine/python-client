@@ -1,7 +1,6 @@
 """
 Example presents error handling for judges.get() API method
 """
-import os
 from sphere_engine import ProblemsClientV3
 from sphere_engine.exceptions import SphereEngineException
 

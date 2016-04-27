@@ -2,7 +2,6 @@
 Example presents usage of the successful initialization of
 Sphere Engine Problems API client
 """
-import os
 from sphere_engine import ProblemsClientV3
 
 # define access parameters

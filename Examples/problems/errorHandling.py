@@ -2,7 +2,6 @@
 Example presents complete error handling schema for calling API methods of
 Sphere Engine Problems API client
 """
-import os
 from sphere_engine import ProblemsClientV3
 from sphere_engine.exceptions import SphereEngineException
 
