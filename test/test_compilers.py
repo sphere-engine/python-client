@@ -32,17 +32,25 @@ if os.environ.get('SE_ENDPOINT_COMPILERS', None) != None and \
             self.assertEqual('C', ret['11'][0])
 
         def test_get_submission_method_success(self):
-            ret = self.client.submissions.get(25, True)
-            self.assertEquals('//test', ret['source'], 'Submission source')
+            ret = self.client.submissions.get(2, True)
+            self.assertEquals('abc', ret['source'], 'Submission source')
             self.assertEquals(1, ret['compiler']['id'], 'Submission compiler')
 
         def test_get_submission_method_not_existing(self):
-            nonexistingSubmission = 9999999999
+            nonexistingSubmission = 3
             try:
                 self.client.submissions.get(nonexistingSubmission)
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
+
+        def test_get_submission_method_access_denied(self):
+            foreignSubmission = 1
+            try:
+                self.client.submissions.get(foreignSubmission)
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 403)
 
         def test_create_submission_method_success(self):
             submission_source = 'unit test'
