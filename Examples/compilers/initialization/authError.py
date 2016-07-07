@@ -7,7 +7,7 @@ from sphere_engine.exceptions import SphereEngineException
 
 # define access parameters
 accessToken = 'wrong access token'
-endpoint = 'compilers.sphere-engine.com'
+endpoint = '<endpoint>'
 
 # initialization
 client = CompilersClientV3(accessToken, endpoint)

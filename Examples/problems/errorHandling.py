@@ -6,8 +6,8 @@ from sphere_engine import ProblemsClientV3
 from sphere_engine.exceptions import SphereEngineException
 
 # define access parameters
-accessToken = 'your_access_token'
-endpoint = 'problems.sphere-engine.com'
+accessToken = '<access_token>'
+endpoint = '<endpoint>'
 
 # initialization
 client = ProblemsClientV3(accessToken, endpoint)
