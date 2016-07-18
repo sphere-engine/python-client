@@ -130,7 +130,7 @@ class CompilersApi(AbstractApi):
         :raises SphereEngineException: code 401 for invalid access token
         """
 
-        resource_path = '/languages'
+        resource_path = '/compilers'
         method = 'GET'
 
         response = self.api_client.call_api(resource_path, method)

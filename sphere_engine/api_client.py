@@ -49,7 +49,7 @@ class ApiClient(object):
     version = None
 
     host = None
-    host_protocol = 'https'
+    host_protocol = 'http'
 
     default_headers = {}
 
