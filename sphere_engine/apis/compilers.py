@@ -13,7 +13,7 @@ from sphere_engine.exceptions import SphereEngineException
 
 class CompilersApiSubmissions(AbstractApi):
 
-    def create(self, sourceCode, compilerId=1, _input=''):
+    def create(self, sourceCode, compilerId=1, _input='', priority=None):
         """ Create submission
 
         :param sourceCode: source code
@@ -22,6 +22,8 @@ class CompilersApiSubmissions(AbstractApi):
         :type : integer
         :param _input: input for the program (default '')
         :type : string
+        :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
+        :type : integer
         :returns: submission id
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -44,6 +46,8 @@ class CompilersApiSubmissions(AbstractApi):
                        'compilerId': compilerId,
                        'input': _input
         }
+        if priority != None:
+            post_params['priority'] = priority
 
         response = self.api_client.call_api(resource_path,
                                             method,

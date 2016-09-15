@@ -514,7 +514,7 @@ class ProblemsApiSubmissions(AbstractApi):
 
         return self.api_client.call_api(resource_path, method, host_params, )
 
-    def create(self, problemCode, source, compilerId=None, userId=None):#, contestCode=None, private=False):
+    def create(self, problemCode, source, compilerId=None, userId=None, priority=None):#, contestCode=None, private=False):
         """ Create a new submission
 
         :param problemCode: problem code
@@ -525,6 +525,8 @@ class ProblemsApiSubmissions(AbstractApi):
         :type compilerId: integer
         :param userId: user id
         :type userId: integer
+        :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
+        :type : integer
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -547,6 +549,8 @@ class ProblemsApiSubmissions(AbstractApi):
         }
         if userId != None:
             post_params['userId'] = userId
+        if priority != None:
+            post_params['priority'] = priority
         #if contestCode != None:
         #    post_params['contestCode'] = contestCode
         #if private:
