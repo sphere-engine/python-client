@@ -100,6 +100,40 @@ class CompilersApiSubmissions(AbstractApi):
         )
         return response
 
+    def getStream(self, _id, stream):
+        """ Fetch raw stream
+
+        :param _id: number of problems to get (default 10)
+        :type _id: integer
+        :param stream: name of the stream, input|output|stderr|cmpinfo|source
+        :type stream: string
+        :returns: submission details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 400 for empty id value
+        :raises SphereEngineException: code 404 for non existing submission or non existing stream
+        """
+
+        if not _id:
+            raise SphereEngineException('empty _id value', 400)
+
+        if not stream in ["input", "stdin", "output", "stdout", "stderr", "error", "cmpinfo", "source"]:
+            raise SphereEngineException('stream doesn\'t exist', 404)
+
+        resource_path = '/submissions/{id}/{stream}'
+        method = 'GET'
+
+        path_params = {
+            'id': _id,
+            'stream': stream
+        }
+
+        response = self.api_client.call_api(resource_path,
+                                            method,
+                                            path_params
+        )
+        return response
+
 class CompilersApi(AbstractApi):
 
     @property

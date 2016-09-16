@@ -52,6 +52,25 @@ if os.environ.get('SE_ENDPOINT_COMPILERS', None) != None and \
             except SphereEngineException as e:
                 self.assertTrue(e.code == 403)
 
+        def test_get_submission_stream_method_success(self):
+            ret = self.client.submissions.getStream(2, 'source')
+            self.assertEquals('abc', ret, 'Submission source')
+
+        def test_get_submission_stream_method_not_existing_submission(self):
+            nonexistingSubmission = 3
+            try:
+                self.client.submissions.getStream(nonexistingSubmission, 'output')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
+        def test_get_submission_stream_method_not_existing_stream(self):
+            try:
+                self.client.submissions.getStream(2, 'nonexistingstream')
+                self.assertTrue(False)
+            except SphereEngineException as e:
+                self.assertTrue(e.code == 404)
+
         def test_create_submission_method_success(self):
             submission_source = 'unit test'
             submission_compiler = 11
