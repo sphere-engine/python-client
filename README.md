@@ -97,3 +97,10 @@ print client.submissions.get(r['id'])
 | Tcl | 	tclsh 8.5.3 |
 | Text | 	plain text |
 | Whitespace | 	wspace 0.3 |
+
+## Unit tests
+
+It is required to set the following environment variables:
+ - SE_ACCESS_TOKEN_COMPILERS - API access token
+ - SE_ENDPOINT_COMPILERS - API endpoint
+ 
