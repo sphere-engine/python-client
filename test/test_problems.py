@@ -32,12 +32,25 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
             self.assertEqual('C++', self.client.compilers()['items'][0]['name'])
 
         def test_all_problems_method_success(self):
-            self.assertEquals(10, self.client.problems.all()['paging']['limit'])
+            problems = self.client.problems.all()
+            self.assertEquals(10, problems['paging']['limit'])
+            self.assertEquals(0, problems['paging']['offset'])
+            self.assertEquals(False, 'shortBody' in problems['items'][0])
+            self.assertEquals(True, 'lastModifiedBody' in problems['items'][0])
+            self.assertEquals(True, 'lastModifiedSettings' in problems['items'][0])
             self.assertEquals(11, self.client.problems.all(11)['paging']['limit'])
-
+            self.assertEquals(False, 'shortBody' in self.client.problems.all(shortBody=False)['items'][0])
+            self.assertEquals(True, 'shortBody' in self.client.problems.all(shortBody=True)['items'][0])
+        
         def test_get_problem_method_success(self):
-            self.assertEquals('TEST', self.client.problems.get('TEST')['code'])
-
+            problem = self.client.problems.get('TEST')
+            self.assertEquals('TEST', problem['code'])
+            self.assertEquals(False, 'shortBody' in problem)
+            self.assertEquals(True, 'lastModifiedBody' in problem)
+            self.assertEquals(True, 'lastModifiedSettings' in problem)
+            self.assertEquals(False, 'shortBody' in self.client.problems.get('TEST', False))
+            self.assertEquals(True, 'shortBody' in self.client.problems.get('TEST', True))
+        
         def test_get_problem_method_wrong_code(self):
             try:
                 self.client.problems.get('NON_EXISTING_PROBLEM')

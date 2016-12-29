@@ -13,13 +13,15 @@ from sphere_engine.exceptions import SphereEngineException
 
 class ProblemsApiProblems(AbstractApi):
 
-    def all(self, limit=10, offset=0):
+    def all(self, limit=10, offset=0, shortBody=False):
         """ Get all problems
 
         :param limit: number of problems to get (default 10)
         :type limit: integer
         :param offset: starting number (default 0)
         :type offset: integer
+        :param shortBody: determines whether shortened body should be returned (default False)
+        :type shortBody: bool
         :returns: list of problems
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -30,7 +32,8 @@ class ProblemsApiProblems(AbstractApi):
 
         query_params = {
             'limit': limit,
-            'offset': offset
+            'offset': offset,
+            'shortBody': int(shortBody)
         }
 
         return self.api_client.call_api(resource_path, method, {}, query_params)
@@ -84,11 +87,13 @@ class ProblemsApiProblems(AbstractApi):
 
         return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
-    def get(self, code):
+    def get(self, code, shortBody=False):
         """ Retrieve an existing problem
 
         :param code: problem code
         :type code: string
+        :param shortBody: determines whether shortened body should be returned (default False)
+        :type shortBody: bool
         :returns: problem details
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -101,8 +106,11 @@ class ProblemsApiProblems(AbstractApi):
         path_params = {
             'code': code
         }
+        query_params = {
+            'shortBody': int(shortBody)
+        }
 
-        return self.api_client.call_api(resource_path, method, path_params)
+        return self.api_client.call_api(resource_path, method, path_params, query_params)
 
     def update(self, code, name=None, body=None, _type=None, interactive=None, masterjudgeId=None, activeTestcases=None):
         """ Update an existing problem
