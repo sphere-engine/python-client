@@ -115,13 +115,9 @@ class CompilersApiSubmissions(AbstractApi):
             raise ValueError("getSubmissions method accepts only list or integer.")
         
         if isinstance(_ids, (list)):
-            print(_ids)
             _ids = list(set(_ids)) # unique ids
-            print(_ids)
             _ids = [ x for x in _ids if isinstance(x, (int))] # only int
-            print(_ids)
             _ids = ','.join(str(x) for x in _ids)
-            print(_ids)
         
         resource_path = '/submissions'
         method = 'GET'
