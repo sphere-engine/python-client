@@ -99,7 +99,39 @@ class CompilersApiSubmissions(AbstractApi):
                                             query_data,
         )
         return response
+    
+    def getMulti(self, _ids):
+        """ Fetches status of multiple submissions (maximum 20 ids)
 
+        :param _ids: submission ids
+        :type _ids: integer|list
+        :returns: submissions details
+        :rtype: json
+        :raises SphereEngineException: code 401 for invalid access token
+        :raises ValueError: for invalid _ids param
+        """
+        
+        if isinstance(_ids, (list, int)) == False:
+            raise ValueError("getSubmissions method accepts only list or integer.")
+        
+        if isinstance(_ids, (list)):
+            print(_ids)
+            _ids = list(set(_ids)) # unique ids
+            print(_ids)
+            _ids = [ x for x in _ids if isinstance(x, (int))] # only int
+            print(_ids)
+            _ids = ','.join(str(x) for x in _ids)
+            print(_ids)
+        
+        resource_path = '/submissions'
+        method = 'GET'
+
+        params = {
+          'ids': _ids
+        }
+
+        return self.api_client.call_api(resource_path, method, {}, params)
+    
     def getStream(self, _id, stream):
         """ Fetch raw stream
 
