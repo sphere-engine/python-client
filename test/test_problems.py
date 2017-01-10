@@ -486,7 +486,41 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
-
+        
+        def test_get_submissions_method_success(self):
+            response = self.client.submissions.getMulti([1, 2])
+            
+            self.assertEquals(True, 'items' in response)
+            self.assertEquals(2, len(response['items']))
+            self.assertEquals(True, 'id' in response['items'][0])
+            self.assertEquals(True, 'id' in response['items'][1])
+            
+        def test_get_submissions_method_nonexisting_submission(self):
+            response = self.client.submissions.getMulti([9999999999])
+            
+            self.assertEquals(True, 'items' in response)
+            self.assertEquals(0, len(response['items']))
+        
+        def test_get_submissions_method_valid_param(self):
+            
+            try:
+                self.client.submissions.getMulti(1)
+                self.client.submissions.getMulti([1])
+                self.client.submissions.getMulti([1, 2])
+                self.assertTrue(True)
+            except ValueError:
+                self.assertTrue(False)
+        
+        def test_get_submissions_method_invalid_param(self):
+            
+            try:
+                self.client.submissions.getMulti('1')
+                self.client.submissions.getMulti((1, 2))
+                self.client.submissions.getMulti(array(1, 2))
+                self.assertTrue(False)
+            except ValueError:
+                self.assertTrue(True)
+            
         def test_create_submission_method_success(self):
             submission_problem_code = 'TEST'
             submission_source = 'source'
