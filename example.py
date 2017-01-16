@@ -1,7 +1,7 @@
 import SphereEngineAPI as se
 
-SC = se.SphereEngineAPI('e7a5298eaab2666705871a0d6afaef37')
-SP = se.SphereEngineAPI('5f0470b710157fd99a5a001955b010bb13ce7eb5')
+SC = se.SphereEngineAPI('<token>')
+SP = se.SphereEngineAPI('<token>')
 
 test =  'Sphere Compilers'
 test += '\n\ttest: ' + SC.compilers.test()[:50] + '...'
