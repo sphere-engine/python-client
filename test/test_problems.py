@@ -3,6 +3,7 @@ import sys
 import nose
 import unittest
 from random import randrange
+from array import array
 from sphere_engine import ProblemsClientV3
 from sphere_engine.exceptions import SphereEngineException
 
@@ -488,17 +489,17 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(e.code == 404)
         
         def test_get_submissions_method_success(self):
-            response = self.client.submissions.getMulti([1, 2])
+            response = self.client.submissions.getMulti([2, 1])
             
-            self.assertEquals(True, 'items' in response)
+            self.assertTrue('items' in response)
             self.assertEquals(2, len(response['items']))
-            self.assertEquals(True, 'id' in response['items'][0])
-            self.assertEquals(True, 'id' in response['items'][1])
+            self.assertTrue('id' in response['items'][0])
+            self.assertTrue('id' in response['items'][1])
             
         def test_get_submissions_method_nonexisting_submission(self):
             response = self.client.submissions.getMulti([9999999999])
             
-            self.assertEquals(True, 'items' in response)
+            self.assertTrue('items' in response)
             self.assertEquals(0, len(response['items']))
         
         def test_get_submissions_method_valid_param(self):
@@ -516,7 +517,7 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
             try:
                 self.client.submissions.getMulti('1')
                 self.client.submissions.getMulti((1, 2))
-                self.client.submissions.getMulti(array(1, 2))
+                self.client.submissions.getMulti(array('l', [1, 2]))
                 self.assertTrue(False)
             except ValueError:
                 self.assertTrue(True)
