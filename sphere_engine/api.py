@@ -27,15 +27,16 @@ class CompilersClientV3(CompilersApi):
     _access_token = None
     _endpoint = None
     
-    def __init__(self, access_token, endpoint, **options):
+    def __init__(self, access_token, endpoint, api_client = None, **options):
         """
         :param access_token: string
-        :param endpoint: string
+        :param endpoint: stringnos
         """
         
         self._access_token = access_token
         self._endpoint = endpoint
-        api_client = ApiClient(self._access_token, self._endpoint, self._version, 'compilers')
+        if api_client is None:
+        	api_client = ApiClient(self._access_token, self._endpoint, self._version, 'compilers')
         
         CompilersApi.__init__(self, api_client)
 

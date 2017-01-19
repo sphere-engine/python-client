@@ -4,6 +4,7 @@ import nose
 import unittest
 from array import array
 from sphere_engine import CompilersClientV3
+from sphere_engine.mocks import CompilersClientV3 as CompilersClientV3Mock
 from sphere_engine.exceptions import SphereEngineException
 
 if os.environ.get('SE_ENDPOINT_COMPILERS', None) != None and \
@@ -14,12 +15,18 @@ if os.environ.get('SE_ENDPOINT_COMPILERS', None) != None and \
         client = None
 
         def setUp(self):
-            self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_ENDPOINT_COMPILERS'])
+            pass
+            #self.client = CompilersClientV3(os.environ['SE_ACCESS_TOKEN_COMPILERS'], os.environ['SE_ENDPOINT_COMPILERS'])
 
         def test_autorization_fail(self):
-            self.client = CompilersClientV3('wrong-access-token', os.environ['SE_ENDPOINT_COMPILERS'])
+            self.client = CompilersClientV3Mock('wrong-access-token', 'test.mock')
             with self.assertRaises(SphereEngineException):
-                self.client.test()
+                self.client.test()    
+
+        # def test_autorization_fail(self):
+        #     self.client = CompilersClientV3('wrong-access-token', os.environ['SE_ENDPOINT_COMPILERS'])
+        #     with self.assertRaises(SphereEngineException):
+        #         self.client.test()
 
         def test_autorization_success(self):
             self.client.test()

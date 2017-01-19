@@ -85,7 +85,7 @@ class ApiClient(object):
         self.user_agent = 'SphereEngine/3.0.0'
 
     def create_host(self, api_type, endpoint, version):
-
+        
         if '.' not in endpoint:
             host = '%s://%s.%s.sphere-engine.com/api/%s' % (
                 self.host_protocol,
@@ -106,6 +106,36 @@ class ApiClient(object):
                    path_params=None, query_params=None, header_params=None,
                    post_params=None, files=None,
                    response_type=None, auth_settings=None, callback=None):
+        """
+        Call method
+
+            @param resource_path: sdfasdf
+            :param resource_path dfawef
+            :param method GET|POST
+            :param path_params
+            :param query_params
+        """
+
+        http_response = self.make_http_call(resource_path, method, path_params, 
+                    query_params, header_params, post_params)
+        response = self.process_response(http_response, response_type)
+        return response
+
+    def process_response(self, http_response, response_type):
+        try:
+            if response_type == 'file':
+                data = http_response.text
+            else:
+                data = http_response.json()
+        except simplejson.scanner.JSONDecodeError as e:
+            raise sphere_engine.exceptions.SphereEngineException(e)
+
+        return data
+
+
+    def make_http_call(self, resource_path, method,
+                   path_params=None, query_params=None, header_params=None,
+                   post_params=None):
         """
         Call method
 
@@ -156,15 +186,7 @@ class ApiClient(object):
                                      headers=header_params,
                                      post_params=post_params)#, body=body)
 
-        try:
-            if response_type == 'file':
-                data = response_data.text
-            else:
-                data = response_data.json()
-        except simplejson.scanner.JSONDecodeError as e:
-            raise sphere_engine.exceptions.SphereEngineException(e)
-
-        return data
+        return response_data
 
         """
         # deserialize response data

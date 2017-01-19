@@ -12,3 +12,4 @@ cover
 .buildpath
 build/
 .settings
+.vscode
