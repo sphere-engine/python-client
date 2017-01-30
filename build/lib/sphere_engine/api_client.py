@@ -49,7 +49,7 @@ class ApiClient(object):
     version = None
 
     host = None
-    host_protocol = 'https'
+    host_protocol = 'http'
 
     default_headers = {}
 
@@ -85,7 +85,7 @@ class ApiClient(object):
         self.user_agent = 'SphereEngine/3.0.0'
 
     def create_host(self, api_type, endpoint, version):
-
+        
         if '.' not in endpoint:
             host = '%s://%s.%s.sphere-engine.com/api/%s' % (
                 self.host_protocol,
@@ -106,6 +106,40 @@ class ApiClient(object):
                    path_params=None, query_params=None, header_params=None,
                    post_params=None, files=None,
                    response_type=None, auth_settings=None, callback=None):
+        """
+        Call method
+
+            @param resource_path: sdfasdf
+            :param resource_path dfawef
+            :param method GET|POST
+            :param path_params
+            :param query_params
+        """
+
+        http_response = self.make_http_call(resource_path, method, path_params, 
+                    query_params, header_params, post_params)
+        response = self.process_response(http_response, response_type)
+        return response
+
+    def process_response(self, http_response, response_type):
+        try:
+            if http_response['http_code'] not in range(200, 206):
+                message = http_response['http_body'].json()['message']
+                #raise SphereEngineException(r.reason, r.status_code)
+                raise sphere_engine.exceptions.SphereEngineException(message, http_response['http_code'])
+            if response_type == 'file':
+                data = http_response['http_body'].text
+            else:
+                data = http_response['http_body'].json()
+        except simplejson.scanner.JSONDecodeError as e:
+            raise sphere_engine.exceptions.SphereEngineException(e)
+
+        return data
+
+
+    def make_http_call(self, resource_path, method,
+                   path_params=None, query_params=None, header_params=None,
+                   post_params=None):
         """
         Call method
 
@@ -140,7 +174,7 @@ class ApiClient(object):
             query_params['access_token'] = self.access_token
 
         # post parameters
-        if post_params or files:
+        if post_params:
             post_params = self.sanitize_for_serialization(post_params)
 
         ## body
@@ -155,16 +189,13 @@ class ApiClient(object):
                                      query_params=query_params,
                                      headers=header_params,
                                      post_params=post_params)#, body=body)
-
-        try:
-            if response_type == 'file':
-                data = response_data.text
-            else:
-                data = response_data.json()
-        except simplejson.scanner.JSONDecodeError as e:
-            raise sphere_engine.exceptions.SphereEngineException(e)
-
-        return data
+        
+        return {
+            'http_code': response_data.status_code,
+            'http_body': response_data,
+            'conn_errno': 0,
+            'conn_error': '',
+        }
 
         """
         # deserialize response data
@@ -224,10 +255,6 @@ class ApiClient(object):
                 "http method must be `GET`, `HEAD`,"
                 " `POST`, `PATCH`, `PUT` or `DELETE`."
             )
-
-        if r.status_code not in range(200, 206):
-            from sphere_engine.exceptions import SphereEngineException
-            raise SphereEngineException(r.reason, r.status_code)
 
         #print r.text
         #print r.status_code

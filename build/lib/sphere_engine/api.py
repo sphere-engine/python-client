@@ -30,7 +30,7 @@ class CompilersClientV3(CompilersApi):
     def __init__(self, access_token, endpoint, **options):
         """
         :param access_token: string
-        :param endpoint: string
+        :param endpoint: stringnos
         """
         
         self._access_token = access_token

@@ -3,6 +3,7 @@ import sys
 import nose
 import unittest
 from random import randrange
+from array import array
 from sphere_engine import ProblemsClientV3
 from sphere_engine.exceptions import SphereEngineException
 
@@ -32,12 +33,25 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
             self.assertEqual('C++', self.client.compilers()['items'][0]['name'])
 
         def test_all_problems_method_success(self):
-            self.assertEquals(10, self.client.problems.all()['paging']['limit'])
+            problems = self.client.problems.all()
+            self.assertEquals(10, problems['paging']['limit'])
+            self.assertEquals(0, problems['paging']['offset'])
+            self.assertEquals(False, 'shortBody' in problems['items'][0])
+            self.assertEquals(True, 'lastModifiedBody' in problems['items'][0])
+            self.assertEquals(True, 'lastModifiedSettings' in problems['items'][0])
             self.assertEquals(11, self.client.problems.all(11)['paging']['limit'])
-
+            self.assertEquals(False, 'shortBody' in self.client.problems.all(shortBody=False)['items'][0])
+            self.assertEquals(True, 'shortBody' in self.client.problems.all(shortBody=True)['items'][0])
+        
         def test_get_problem_method_success(self):
-            self.assertEquals('TEST', self.client.problems.get('TEST')['code'])
-
+            problem = self.client.problems.get('TEST')
+            self.assertEquals('TEST', problem['code'])
+            self.assertEquals(False, 'shortBody' in problem)
+            self.assertEquals(True, 'lastModifiedBody' in problem)
+            self.assertEquals(True, 'lastModifiedSettings' in problem)
+            self.assertEquals(False, 'shortBody' in self.client.problems.get('TEST', False))
+            self.assertEquals(True, 'shortBody' in self.client.problems.get('TEST', True))
+        
         def test_get_problem_method_wrong_code(self):
             try:
                 self.client.problems.get('NON_EXISTING_PROBLEM')
@@ -473,7 +487,41 @@ if os.environ.get('SE_ENDPOINT_PROBLEMS', None) != None and \
                 self.assertTrue(False)
             except SphereEngineException as e:
                 self.assertTrue(e.code == 404)
-
+        
+        def test_get_submissions_method_success(self):
+            response = self.client.submissions.getMulti([2, 1])
+            
+            self.assertTrue('items' in response)
+            self.assertEquals(2, len(response['items']))
+            self.assertTrue('id' in response['items'][0])
+            self.assertTrue('id' in response['items'][1])
+            
+        def test_get_submissions_method_nonexisting_submission(self):
+            response = self.client.submissions.getMulti([9999999999])
+            
+            self.assertTrue('items' in response)
+            self.assertEquals(0, len(response['items']))
+        
+        def test_get_submissions_method_valid_param(self):
+            
+            try:
+                self.client.submissions.getMulti(1)
+                self.client.submissions.getMulti([1])
+                self.client.submissions.getMulti([1, 2])
+                self.assertTrue(True)
+            except ValueError:
+                self.assertTrue(False)
+        
+        def test_get_submissions_method_invalid_param(self):
+            
+            try:
+                self.client.submissions.getMulti('1')
+                self.client.submissions.getMulti((1, 2))
+                self.client.submissions.getMulti(array('l', [1, 2]))
+                self.assertTrue(False)
+            except ValueError:
+                self.assertTrue(True)
+            
         def test_create_submission_method_success(self):
             submission_problem_code = 'TEST'
             submission_source = 'source'
