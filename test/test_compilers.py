@@ -75,22 +75,27 @@ class TestCompilers(unittest.TestCase):
         except SphereEngineException as e:
             self.assertEqual(403, e.code)
             
-    def test_get_submissions_method_success(self):
-        response = self.client.submissions.getMulti([1, 2])
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submissions_method_success(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissions/two')
+        response = self.client.submissions.getMulti([4, 9])
         
         self.assertTrue('items' in response)
         self.assertEquals(2, len(response['items']))
         self.assertTrue('id' in response['items'][0])
         self.assertTrue('id' in response['items'][1])
         
-    def test_get_submissions_method_nonexisting_submission(self):
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submissions_method_nonexisting_submission(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissions/empty')
         response = self.client.submissions.getMulti([9999999999])
         
         self.assertTrue('items' in response)
         self.assertEquals(0, len(response['items']))
     
-    def test_get_submissions_method_valid_param(self):
-        
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submissions_method_valid_param(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissions/one')
         try:
             self.client.submissions.getMulti(1)
             self.client.submissions.getMulti([1])
@@ -100,7 +105,6 @@ class TestCompilers(unittest.TestCase):
             self.assertTrue(False)
     
     def test_get_submissions_method_invalid_param(self):
-        
         try:
             self.client.submissions.getMulti('1')
             self.client.submissions.getMulti((1, 2))
@@ -109,26 +113,48 @@ class TestCompilers(unittest.TestCase):
         except ValueError:
             self.assertTrue(True)
 
-    def test_get_submission_stream_method_success(self):
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submission_stream_method_success(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/source')
         ret = self.client.submissions.getStream(2, 'source')
         self.assertEquals('abc', ret, 'Submission source')
 
-    def test_get_submission_stream_method_not_existing_submission(self):
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/input')
+        ret = self.client.submissions.getStream(2, 'input')
+        self.assertEquals('input', ret, 'Submission input')
+
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/output')
+        ret = self.client.submissions.getStream(2, 'output')
+        self.assertEquals('output', ret, 'Submission output')
+
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/error')
+        ret = self.client.submissions.getStream(2, 'error')
+        self.assertEquals('error', ret, 'Submission error')
+
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/cmpinfo')
+        ret = self.client.submissions.getStream(2, 'cmpinfo')
+        self.assertEquals('cmpinfo', ret, 'Submission cmpinfo')
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submission_stream_method_not_existing_submission(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingSubmission')
         nonexistingSubmission = 3
         try:
             self.client.submissions.getStream(nonexistingSubmission, 'output')
             self.assertTrue(False)
         except SphereEngineException as e:
-            self.assertTrue(e.code == 404)
+            self.assertEqual(404, e.code)
 
     def test_get_submission_stream_method_not_existing_stream(self):
         try:
             self.client.submissions.getStream(2, 'nonexistingstream')
             self.assertTrue(False)
         except SphereEngineException as e:
-            self.assertTrue(e.code == 404)
+            self.assertEqual(404, e.code)
 
-    def test_create_submission_method_success(self):
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_method_success(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/createSubmission/success')
         submission_source = 'unit test'
         submission_compiler = 11
         submission_input = 'unit test input'
@@ -137,17 +163,13 @@ class TestCompilers(unittest.TestCase):
 
         self.assertTrue(submission_id > 0, 'New submission id should be greater than 0')
 
-        s = self.client.submissions.get(submission_id, True, True)
-        self.assertEquals(submission_source, s['source'], 'Submission source')
-        self.assertEquals(submission_input, s['input'], 'Submission input')
-        self.assertEquals(submission_compiler, s['compiler']['id'], 'Submission compiler ID')
-
-    def test_create_submission_method_wrong_compiler(self):
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_method_wrong_compiler(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompiler')
         wrongCompilerId = 9999
 
         try:
             self.client.submissions.create('unit_test', wrongCompilerId)
             self.assertTrue(False)
         except SphereEngineException as e:
-            self.assertTrue(e.code == 404)
-
+            self.assertEqual(404, e.code)
