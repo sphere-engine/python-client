@@ -26,15 +26,17 @@ import sphere_engine
 ```
 
 
-## Getting Started
+## Unit tests
 
-TODO
+```python
+./test.sh
+```
 
 ## Documentation
 
 Usage:
 
-```sh
+```python
 from sphere_engine import CompilersClientV3
 client = CompilersClientV3('<token>', '<endpoint>')
 r = client.submissions.create('<source_code>', compilerId, '<input>')
@@ -100,8 +102,4 @@ print client.submissions.get(r['id'])
 
 ## Unit tests
 
-It is required to set the following environment variables:
- - SE_ACCESS_TOKEN_COMPILERS - API access token for Compilers module
- - SE_ENDPOINT_COMPILERS - API endpoint for Compilers module
- - SE_ACCESS_TOKEN_PROBLEMS - API access token for Problems module
- - SE_ENDPOINT_PROBLEMS - API endpoint for Problems module
+@todo
