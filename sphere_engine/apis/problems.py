@@ -369,7 +369,7 @@ class ProblemsApiProblems(AbstractApi):
         resource_path = '/problems/{problemCode}/testcases/{number}/{filename}'
         method = 'GET'
 
-        if filename not in ['input', 'output']:
+        if filename not in ['input', 'output', 'stdin', 'stdout']:
             raise SphereEngineException('nonexisting file', 404)
 
         path_params = {

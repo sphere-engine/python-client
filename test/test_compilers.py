@@ -22,8 +22,11 @@ class TestCompilers(unittest.TestCase):
     def test_autorization_fail(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/unauthorizedAccess')
 
-        with self.assertRaises(SphereEngineException):
+        try:
             self.client.test()
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertTrue(401, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_autorization_success(self, mock_get):

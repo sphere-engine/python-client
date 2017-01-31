@@ -1,8 +1,0 @@
-#!/bin/sh
-
-SE_ENDPOINT_COMPILERS= \
-SE_ENDPOINT_PROBLEMS= \
-SE_ACCESS_TOKEN_COMPILERS= \
-SE_ACCESS_TOKEN_PROBLEMS= \
-coverage run nosetests
-coverage html -d cover
