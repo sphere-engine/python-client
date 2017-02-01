@@ -1,27 +1,28 @@
-#
-# Sphere Engine API
-#
-# LICENSE
-#
-#
-# @copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
-# @license    link do licencji
-# @version    0.6
+# coding: utf-8
 
-from .base import AbstractApi
+"""
+Sphere Engine API
+
+@copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
+"""
+
 from sphere_engine.exceptions import SphereEngineException
+from .base import AbstractApi
 
 class ProblemsApiProblems(AbstractApi):
+    """
+    Sphere Engine Problems module for problems
+    """
 
-    def all(self, limit=10, offset=0, shortBody=False):
+    def all(self, limit=10, offset=0, short_body=False):
         """ Get all problems
 
         :param limit: number of problems to get (default 10)
         :type limit: integer
         :param offset: starting number (default 0)
         :type offset: integer
-        :param shortBody: determines whether shortened body should be returned (default False)
-        :type shortBody: bool
+        :param short_body: determines whether shortened body should be returned (default False)
+        :type short_body: bool
         :returns: list of problems
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -33,7 +34,7 @@ class ProblemsApiProblems(AbstractApi):
         query_params = {
             'limit': limit,
             'offset': offset,
-            'shortBody': int(shortBody)
+            'shortBody': int(short_body)
         }
 
         response = self.api_client.call_api(resource_path, method, {}, query_params)
@@ -43,7 +44,7 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def create(self, code, name, body='', _type='bin', interactive=False, masterjudgeId=1001):
+    def create(self, code, name, body='', _type='bin', interactive=False, masterjudge_id=1001):
         """ Create a new problem
 
         :param code: problem code
@@ -56,8 +57,8 @@ class ProblemsApiProblems(AbstractApi):
         :type _type: string ('binary', 'min' or 'max')
         :param interactive: interactive problem flag (default False)
         :type interactive: bool
-        :param masterjudgeId: masterjudge id (default 1001, i.e. Score is % of correctly solved testcases)
-        :type masterjudgeId: integer
+        :param masterjudge_id: masterjudge id (default 1001, i.e. % of correctly solved testcases)
+        :type masterjudge_id: integer
         :returns: code of created problem
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -82,12 +83,12 @@ class ProblemsApiProblems(AbstractApi):
             raise SphereEngineException('wrong type', 400)
 
         post_params = {
-           'code': code,
-           'name': name,
-           'body': body,
-           'type': _type,
-           'interactive': interactive,
-           'masterjudgeId': masterjudgeId
+            'code': code,
+            'name': name,
+            'body': body,
+            'type': _type,
+            'interactive': interactive,
+            'masterjudgeId': masterjudge_id
         }
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
@@ -97,13 +98,13 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def get(self, code, shortBody=False):
+    def get(self, code, short_body=False):
         """ Retrieve an existing problem
 
         :param code: problem code
         :type code: string
-        :param shortBody: determines whether shortened body should be returned (default False)
-        :type shortBody: bool
+        :param short_body: determines whether shortened body should be returned (default False)
+        :type short_body: bool
         :returns: problem details
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -117,7 +118,7 @@ class ProblemsApiProblems(AbstractApi):
             'code': code
         }
         query_params = {
-            'shortBody': int(shortBody)
+            'shortBody': int(short_body)
         }
 
         response = self.api_client.call_api(resource_path, method, path_params, query_params)
@@ -127,7 +128,8 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def update(self, code, name=None, body=None, _type=None, interactive=None, masterjudgeId=None, activeTestcases=None):
+    def update(self, code, name=None, body=None, _type=None, interactive=None,
+               masterjudge_id=None, active_testcases=None):
         """ Update an existing problem
 
         :param code: problem code
@@ -140,10 +142,10 @@ class ProblemsApiProblems(AbstractApi):
         :type _type: string ('binary', 'min' or 'max')
         :param interactive: interactive problem flag (default None)
         :type interactive: bool
-        :param masterjudgeId: masterjudge id (default None)
-        :type masterjudgeId: integer
-        :param activeTestcases: list of active testcases IDs (default None)
-        :type activeTestcases: List[integer]
+        :param masterjudge_id: masterjudge id (default None)
+        :type masterjudge_id: integer
+        :param active_testcases: list of active testcases IDs (default None)
+        :type active_testcases: List[integer]
         :returns: code of created problem
         :rtype: json
         :returns: void
@@ -163,7 +165,7 @@ class ProblemsApiProblems(AbstractApi):
             raise SphereEngineException('empty name', 400)
 
         path_params = {
-           'code': code
+            'code': code
         }
 
         resource_path = '/problems/{code}'
@@ -171,7 +173,7 @@ class ProblemsApiProblems(AbstractApi):
 
         post_params = {}
         if name != None:
-            post_params['name'] = name;
+            post_params['name'] = name
         if body != None:
             post_params['body'] = body
         if _type != None:
@@ -180,10 +182,10 @@ class ProblemsApiProblems(AbstractApi):
             post_params['type'] = _type
         if interactive != None:
             post_params['interactive'] = 1 if interactive else 0
-        if masterjudgeId != None:
-            post_params['masterjudgeId'] = masterjudgeId
-        if activeTestcases != None:
-            post_params['activeTestcases'] = ','.join(map(str, activeTestcases))
+        if masterjudge_id != None:
+            post_params['masterjudgeId'] = masterjudge_id
+        if active_testcases != None:
+            post_params['activeTestcases'] = ','.join(map(str, active_testcases))
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
@@ -192,13 +194,13 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def updateActiveTestcases(self, code, activeTestcases):
+    def updateActiveTestcases(self, code, active_testcases):
         """ Update active testcases related to the problem
 
         :param code: problem code
         :type code: string
-        :param activeTestcases: list of active testcases IDs
-        :type activeTestcases: List[integer]
+        :param active_testcases: list of active testcases IDs
+        :type active_testcases: List[integer]
         :returns: void
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -207,9 +209,9 @@ class ProblemsApiProblems(AbstractApi):
         :raises SphereEngineException: code 404 for non existing problem
         """
 
-        self.update(code, activeTestcases=activeTestcases)
+        self.update(code, active_testcases=active_testcases)
 
-    def allTestcases(self, problemCode):
+    def allTestcases(self, problem_code):
         """ Retrieve list of problem testcases
 
         :param problemCode: problem code
@@ -225,7 +227,7 @@ class ProblemsApiProblems(AbstractApi):
         method = 'GET'
 
         path_params = {
-           'problemCode': problemCode
+            'problemCode': problem_code
         }
 
         response = self.api_client.call_api(resource_path, method, path_params)
@@ -235,19 +237,20 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def createTestcase(self, problemCode, _input='', output='', timelimit=1, judgeId=1, active=True):
+    def createTestcase(self, problem_code, _input='', output='', timelimit=1,
+                       judge_id=1, active=True):
         """ Create a problem testcase
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_code: problem code
+        :type problem_code: string
         :param _input: model input data (default '')
         :type _input: string
         :param output: model output data (default '')
         :type output: string
         :param timelimit: time limit in seconds (default 1)
         :type timelimit: double
-        :param judgeId: judge id (default 1, i.e. Ignore extra whitespaces)
-        :type judgeId: integer
+        :param judge_id: judge id (default 1, i.e. Ignore extra whitespaces)
+        :type judge_id: integer
         :param active: if test should be active (default True)
         :type active: bool
         :returns: number of created testcase
@@ -262,14 +265,14 @@ class ProblemsApiProblems(AbstractApi):
         method = 'POST'
 
         path_params = {
-           'problemCode': problemCode
+            'problemCode': problem_code
         }
 
         post_params = {
             'input': _input,
             'output': output,
             'timelimit': timelimit,
-            'judgeId': judgeId,
+            'judgeId': judge_id,
             'active': active
         }
 
@@ -280,7 +283,7 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def getTestcase(self, problemCode, number):
+    def getTestcase(self, problem_code, number):
         """ Retrieve problem testcase
 
         :param problemCode: problem code
@@ -299,7 +302,7 @@ class ProblemsApiProblems(AbstractApi):
         method = 'GET'
 
         path_params = {
-            'problemCode': problemCode,
+            'problemCode': problem_code,
             'number': number
         }
 
@@ -310,7 +313,8 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def updateTestcase(self, problemCode, number, _input=None, output=None, timelimit=None, judgeId=None, active=None):
+    def updateTestcase(self, problem_code, number, _input=None, output=None,
+                       timelimit=None, judge_id=None, active=None):
         """ Update the problem testcase
 
         :param problemCode: problem code
@@ -340,19 +344,19 @@ class ProblemsApiProblems(AbstractApi):
         method = 'PUT'
 
         path_params = {
-            'problemCode': problemCode,
+            'problemCode': problem_code,
             'number': number
         }
 
         post_params = {}
-        if input != None:
+        if _input != None:
             post_params['input'] = _input
         if output != None:
             post_params['output'] = output
         if timelimit != None:
             post_params['timelimit'] = timelimit
-        if judgeId != None:
-            post_params['judgeId'] = judgeId
+        if judge_id != None:
+            post_params['judgeId'] = judge_id
         if active != None:
             post_params['active'] = active
 
@@ -363,7 +367,7 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def deleteTestcase(self, problemCode, number):
+    def deleteTestcase(self, problem_code, number):
         """ Delete the problem testcase
 
         :param problemCode: problem code
@@ -382,7 +386,7 @@ class ProblemsApiProblems(AbstractApi):
         method = 'DELETE'
 
         path_params = {
-            'problemCode': problemCode,
+            'problemCode': problem_code,
             'number': number
         }
 
@@ -393,7 +397,7 @@ class ProblemsApiProblems(AbstractApi):
 
         return response
 
-    def getTestcaseFile(self, problemCode, number, filename):
+    def getTestcaseFile(self, problem_code, number, filename):
         """ Retrieve a problem testcase file
 
         :param problemCode: problem code
@@ -418,12 +422,13 @@ class ProblemsApiProblems(AbstractApi):
             raise SphereEngineException('nonexisting file', 404)
 
         path_params = {
-            'problemCode': problemCode,
+            'problemCode': problem_code,
             'number': number,
             'filename': filename
         }
 
-        response = self.api_client.call_api(resource_path, method, path_params, response_type='file')
+        response = self.api_client.call_api(resource_path, method, path_params,
+                                            response_type='file')
 
         if isinstance(response, dict):
             raise SphereEngineException('invalid or empty response', 422)
@@ -432,8 +437,11 @@ class ProblemsApiProblems(AbstractApi):
 
 
 class ProblemsApiJudges(AbstractApi):
+    """
+    Sphere Engine Problems module for judge
+    """
 
-    def all(self, limit=10, offset=0, type='testcase'):
+    def all(self, limit=10, offset=0, _type='testcase'):
         """ List of all judges
 
         :param limit: number of judges to get (default 10)
@@ -460,15 +468,15 @@ class ProblemsApiJudges(AbstractApi):
 
         return response
 
-    def create(self, sourceCode, compilerId=1, type='testcase', name=''):
+    def create(self, source_code, compiler_id=1, _type='testcase', name=''):
         """ Create a new judge
 
-        :param sourceCode: judge source code
-        :type sourceCode: string
-        :param compilerId: compiler id (default 1, i.e. C++)
-        :type compilerId: integer
-        :param type: judge type
-        :type type: string ('testcase' or 'master')
+        :param source_code: judge source code
+        :type source_code: string
+        :param compiler_id: compiler id (default 1, i.e. C++)
+        :type compiler_id: integer
+        :param _type: judge type
+        :type _type: string ('testcase' or 'master')
         :param name: judge name (default '')
         :type name: string
         :returns: id of created judge
@@ -481,13 +489,13 @@ class ProblemsApiJudges(AbstractApi):
         resource_path = '/judges'
         method = 'POST'
 
-        if sourceCode == '':
+        if source_code == '':
             raise SphereEngineException("empty source", 400)
 
         post_params = {
-            'source': sourceCode,
-            'compilerId': compilerId,
-            'type': type,
+            'source': source_code,
+            'compilerId': compiler_id,
+            'type': _type,
             'name': name,
         }
 
@@ -524,15 +532,15 @@ class ProblemsApiJudges(AbstractApi):
 
         return response
 
-    def update(self, _id, sourceCode=None, compilerId=None, name=None):
+    def update(self, _id, source_code=None, compiler_id=None, name=None):
         """ Update judge
 
         :param _id: judge id
         :type _id: integer
-        :param sourceCode: judge source code(default None)
-        :type sourceCode: string
-        :param compilerId: compiler id (default None)
-        :type compilerId: integer
+        :param source_code: judge source code(default None)
+        :type source_code: string
+        :param compiler_id: compiler id (default None)
+        :type compiler_id: integer
         :param name: judge name (default None)
         :type name: string
         :returns: void
@@ -547,7 +555,7 @@ class ProblemsApiJudges(AbstractApi):
         resource_path = '/judges/{id}'
         method = 'PUT'
 
-        if sourceCode != None and sourceCode == '':
+        if source_code != None and source_code == '':
             raise SphereEngineException('empty source', 400)
 
         host_params = {
@@ -555,10 +563,10 @@ class ProblemsApiJudges(AbstractApi):
         }
 
         post_params = {}
-        if sourceCode != None:
-            post_params['source'] = sourceCode
-        if compilerId != None:
-            post_params['compilerId'] = compilerId
+        if source_code != None:
+            post_params['source'] = source_code
+        if compiler_id != None:
+            post_params['compilerId'] = compiler_id
         if name != None:
             post_params['name'] = name
 
@@ -571,6 +579,9 @@ class ProblemsApiJudges(AbstractApi):
 
 
 class ProblemsApiSubmissions(AbstractApi):
+    """
+    Sphere Engine Problems module for submissions
+    """
 
     def get(self, _id):
         """ Fetch submission details
@@ -587,7 +598,7 @@ class ProblemsApiSubmissions(AbstractApi):
         method = 'GET'
 
         host_params = {
-          'id': _id
+            'id': _id
         }
 
         response = self.api_client.call_api(resource_path, method, host_params, )
@@ -596,11 +607,11 @@ class ProblemsApiSubmissions(AbstractApi):
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
-    
+
     def getMulti(self, ids):
         """ Fetches status of multiple submissions (maximum 20 ids)
             Results are sorted ascending by id.
-            
+
         :param ids: submission ids
         :type ids: integer|list
         :returns: submissions details
@@ -608,19 +619,18 @@ class ProblemsApiSubmissions(AbstractApi):
         :raises SphereEngineException: code 401 for invalid access token
         :raises ValueError: for invalid ids param
         """
-        
-        if isinstance(ids, (list, int)) == False:
+
+        if isinstance(ids, (list, int)) is False:
             raise ValueError("getSubmissions method accepts only list or integer.")
-        
+
         if isinstance(ids, (list)):
-            ids = ','.join(list(map(str, filter(lambda x: isinstance(x, (int)) and x > 0, set(ids)))))
-            
-        
+            ids = ','.join([str(x) for x in set(ids) if isinstance(x, int) and x > 0])
+
         resource_path = '/submissions'
         method = 'GET'
 
         params = {
-          'ids': ids
+            'ids': ids
         }
 
         response = self.api_client.call_api(resource_path, method, {}, params)
@@ -629,18 +639,19 @@ class ProblemsApiSubmissions(AbstractApi):
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
-    
-    def create(self, problemCode, source, compilerId=None, userId=None, priority=None):#, contestCode=None, private=False):
+
+    def create(self, problem_code, source, compiler_id=None, user_id=None,
+               priority=None):#, contestCode=None, private=False):
         """ Create a new submission
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_code: problem code
+        :type problem_code: string
         :param source: submission source code
         :type source: string
-        :param compilerId: compiler id
-        :type compilerId: integer
-        :param userId: user id
-        :type userId: integer
+        :param compiler_id: compiler id
+        :type compiler_id: integer
+        :param user_id: user id
+        :type user_id: integer
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
         :returns: id of created submission
@@ -659,12 +670,12 @@ class ProblemsApiSubmissions(AbstractApi):
             raise SphereEngineException('empty source', 400)
 
         post_params = {
-            'problemCode': problemCode,
-            'compilerId': compilerId,
+            'problemCode': problem_code,
+            'compilerId': compiler_id,
             'source': source
         }
-        if userId != None:
-            post_params['userId'] = userId
+        if user_id != None:
+            post_params['userId'] = user_id
         if priority != None:
             post_params['priority'] = priority
         #if contestCode != None:
@@ -680,6 +691,9 @@ class ProblemsApiSubmissions(AbstractApi):
         return response
 
 class ProblemsApi(AbstractApi):
+    """
+    Sphere Engine Problems module base class
+    """
 
     @property
     def problems(self):
@@ -734,6 +748,5 @@ class ProblemsApi(AbstractApi):
         method = 'GET'
 
         response = self.api_client.call_api(resource_path,
-                                            method,
-        )
+                                            method,)
         return response

@@ -1,6 +1,17 @@
+# coding: utf-8
+
+"""
+Sphere Engine API
+
+@copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
+"""
+
 import json
 
 class MockResponse(object):
+    """
+    Wrapper for response in mocks
+    """
 
     text = None
 
@@ -8,21 +19,25 @@ class MockResponse(object):
         self.text = text
 
     def json(self):
+        """
+        Mocking retrieving as JSON
+        """
+
         return self.text
 
 def get_mock_data(data_json_path):
     """
     Gets data from JSON mock file.
 
-        :param routing_json_path: path to routing json
-        :type routing_json_path: string
+        :param data_json_path: path to data in json file
+        :type data_json_path: string
         :raises IOError on nonexisting JSON file
         :raises KeyError on nonexisting data in JSON
         :returns: data from json file
         :rtype: dict
-    """    
-    
-    with open('./client-commons/mockData.json') as mock_data:    
+    """
+
+    with open('./client-commons/mockData.json') as mock_data:
         mock_data = json.load(mock_data)
         path_array = data_json_path.split('/')
 

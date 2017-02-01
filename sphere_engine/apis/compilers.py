@@ -1,25 +1,26 @@
-#
-# Sphere Engine API
-#
-# LICENSE
-#
-#
-# @copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
-# @license    link do licencji
-# @version    0.6
+# coding: utf-8
 
-from .base import AbstractApi
+"""
+Sphere Engine API
+
+@copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
+"""
+
 from sphere_engine.exceptions import SphereEngineException
+from .base import AbstractApi
 
 class CompilersApiSubmissions(AbstractApi):
+    """
+    Sphere Engine Problems module for submissions
+    """
 
-    def create(self, sourceCode, compilerId=1, _input='', priority=None):
+    def create(self, source_code, compiler_id=1, _input='', priority=None):
         """ Create submission
 
-        :param sourceCode: source code
-        :type : string
-        :param compilerId: id of the compiler (default 1, i.e. C++)
-        :type : integer
+        :param source_code: source code
+        :type source_code: string
+        :param compiler_id: id of the compiler (default 1, i.e. C++)
+        :type compiler_id: integer
         :param _input: input for the program (default '')
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
@@ -31,52 +32,53 @@ class CompilersApiSubmissions(AbstractApi):
         :raises SphereEngineException: code 400 for non integer compilerId
         """
 
-        if not sourceCode:
+        if not source_code:
             raise SphereEngineException('empty source code', 400)
 
         try:
-            _cId = int(compilerId)
+            c_id = int(compiler_id)
         except:
             raise SphereEngineException('compilerId should be integer', 400)
 
         resource_path = '/submissions'
         method = 'POST'
         post_params = {
-                       'sourceCode': sourceCode,
-                       'compilerId': compilerId,
-                       'input': _input
+            'sourceCode': source_code,
+            'compilerId': c_id,
+            'input': _input
         }
         if priority != None:
             post_params['priority'] = priority
 
-        response = self.api_client.call_api(resource_path,
-                                            method,
-                                            {},
-                                            {},
-                                            {},
-                                            post_params=post_params,
-        )
+        response = self.api_client.call_api(resource_path, method, {}, {}, {},
+                                            post_params=post_params,)
 
         if 'id' not in response:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
 
-    def get(self, _id, withSource=False, withInput=False, withOutput=False, withStderr=False, withCmpinfo=False):
+    def get(self, _id, with_source=False, with_input=False, with_output=False,
+            with_stderr=False, with_cmpinfo=False):
         """ Get submission details
 
         :param _id: number of problems to get (default 10)
         :type _id: integer
-        :param withSource: determines whether source code of the submission should be returned (default False)
-        :type withSource: bool
-        :param withInput: determines whether input data of the submission should be returned (default False)
-        :type withInput: bool
-        :param withOutput: determines whether output produced by the program should be returned (default False)
-        :type withOutput: bool
-        :param withStderr: determines whether stderr should be returned (default False)
-        :type withStderr: bool
-        :param withCmpinfo: determines whether compilation information should be returned (default False)
-        :type withCmpinfo: bool
+        :param with_source: determines whether source code of the submission
+                            should be returned (default False)
+        :type with_source: bool
+        :param with_input: determines whether input data of the submission
+                          should be returned (default False)
+        :type with_input: bool
+        :param with_output: determines whether output produced by the program
+                           should be returned (default False)
+        :type with_output: bool
+        :param with_stderr: determines whether stderr
+                           should be returned (default False)
+        :type with_stderr: bool
+        :param with_cmpinfo: determines whether compilation information
+                            should be returned (default False)
+        :type with_cmpinfo: bool
         :returns: submission details
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -90,24 +92,21 @@ class CompilersApiSubmissions(AbstractApi):
         resource_path = '/submissions/{id}'
         method = 'GET'
         query_data = {
-            'withSource': int(withSource),
-            'withInput': int(withInput),
-            'withOutput': int(withOutput),
-            'withStderr': int(withStderr),
-            'withCmpinfo': int(withCmpinfo),
+            'withSource': int(with_source),
+            'withInput': int(with_input),
+            'withOutput': int(with_output),
+            'withStderr': int(with_stderr),
+            'withCmpinfo': int(with_cmpinfo),
         }
 
-        response = self.api_client.call_api(resource_path,
-                                            method,
-                                            {'id': _id},
-                                            query_data,
-        )
+        response = self.api_client.call_api(resource_path, method, {'id': _id},
+                                            query_data,)
 
         if 'status' not in response:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
-    
+
     def getMulti(self, ids):
         """ Fetches status of multiple submissions (maximum 20 ids)
             Results are sorted ascending by id.
@@ -119,18 +118,18 @@ class CompilersApiSubmissions(AbstractApi):
         :raises SphereEngineException: code 401 for invalid access token
         :raises ValueError: for invalid _ids param
         """
-        
-        if isinstance(ids, (list, int)) == False:
+
+        if isinstance(ids, (list, int)) is False:
             raise ValueError("getSubmissions method accepts only list or integer.")
-        
+
         if isinstance(ids, (list)):
-            ids = ','.join(list(map(str, filter(lambda x: isinstance(x, (int)) and x > 0, set(ids)))))
-        
+            ids = ','.join([str(x) for x in set(ids) if isinstance(x, int) and x > 0])
+
         resource_path = '/submissions'
         method = 'GET'
 
         params = {
-          'ids': ids
+            'ids': ids
         }
 
         response = self.api_client.call_api(resource_path, method, {}, params)
@@ -139,7 +138,7 @@ class CompilersApiSubmissions(AbstractApi):
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
-    
+
     def getStream(self, _id, stream):
         """ Fetch raw stream
 
@@ -157,7 +156,8 @@ class CompilersApiSubmissions(AbstractApi):
         if not _id:
             raise SphereEngineException('empty _id value', 400)
 
-        if not stream in ["input", "stdin", "output", "stdout", "stderr", "error", "cmpinfo", "source"]:
+        if stream not in ["input", "stdin", "output", "stdout", "stderr",
+                          "error", "cmpinfo", "source"]:
             raise SphereEngineException('stream doesn\'t exist', 404)
 
         resource_path = '/submissions/{id}/{stream}'
@@ -168,10 +168,8 @@ class CompilersApiSubmissions(AbstractApi):
             'stream': stream
         }
 
-        response = self.api_client.call_api(resource_path,
-                                            method,
-                                            path_params
-        )
+        response = self.api_client.call_api(resource_path, method, path_params,
+                                            response_type='file')
 
         if isinstance(response, dict):
             raise SphereEngineException('invalid or empty response', 422)
@@ -179,6 +177,9 @@ class CompilersApiSubmissions(AbstractApi):
         return response
 
 class CompilersApi(AbstractApi):
+    """
+    Sphere Engine Problems module base class
+    """
 
     @property
     def submissions(self):
