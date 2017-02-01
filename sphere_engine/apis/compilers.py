@@ -56,6 +56,10 @@ class CompilersApiSubmissions(AbstractApi):
                                             {},
                                             post_params=post_params,
         )
+
+        if 'id' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
         return response
 
     def get(self, _id, withSource=False, withInput=False, withOutput=False, withStderr=False, withCmpinfo=False):
@@ -98,6 +102,10 @@ class CompilersApiSubmissions(AbstractApi):
                                             {'id': _id},
                                             query_data,
         )
+
+        if 'status' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
         return response
     
     def getMulti(self, ids):
@@ -125,7 +133,12 @@ class CompilersApiSubmissions(AbstractApi):
           'ids': ids
         }
 
-        return self.api_client.call_api(resource_path, method, {}, params)
+        response = self.api_client.call_api(resource_path, method, {}, params)
+
+        if 'items' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
     
     def getStream(self, _id, stream):
         """ Fetch raw stream
@@ -159,6 +172,10 @@ class CompilersApiSubmissions(AbstractApi):
                                             method,
                                             path_params
         )
+
+        if isinstance(response, dict):
+            raise SphereEngineException('invalid or empty response', 422)
+
         return response
 
 class CompilersApi(AbstractApi):
@@ -179,12 +196,17 @@ class CompilersApi(AbstractApi):
         :returns: Test message
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
+        :raises SphereEngineException: code 422 for invalid or empty response
         """
 
         resource_path = '/test'
         method = 'GET'
 
         response = self.api_client.call_api(resource_path, method, )
+
+        if 'answerToLifeAndEverything' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
         return response
 
     def compilers(self):
@@ -199,4 +221,8 @@ class CompilersApi(AbstractApi):
         method = 'GET'
 
         response = self.api_client.call_api(resource_path, method)
+
+        if 'items' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
         return response

@@ -79,6 +79,16 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(403, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submission_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmission/invalid')
+
+        try:
+            self.client.submissions.get(123)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submissions_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/getSubmissions/two')
         response = self.client.submissions.getMulti([4, 9])
@@ -115,6 +125,16 @@ class TestCompilers(unittest.TestCase):
             self.assertTrue(False)
         except ValueError:
             self.assertTrue(True)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submissions_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissions/invalid')
+
+        try:
+            self.client.submissions.getMulti([123])
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_stream_method_success(self, mock_get):
@@ -156,6 +176,16 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submission_stream_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/invalid')
+
+        try:
+            self.client.submissions.getStream(422, 'input')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/success')
         submission_source = 'unit test'
@@ -176,3 +206,14 @@ class TestCompilers(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('compilers/createSubmission/invalid')
+
+        try:
+            self.client.submissions.create('unit_test', 1)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+            
