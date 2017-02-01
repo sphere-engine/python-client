@@ -36,7 +36,12 @@ class ProblemsApiProblems(AbstractApi):
             'shortBody': int(shortBody)
         }
 
-        return self.api_client.call_api(resource_path, method, {}, query_params)
+        response = self.api_client.call_api(resource_path, method, {}, query_params)
+
+        if 'paging' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def create(self, code, name, body='', _type='bin', interactive=False, masterjudgeId=1001):
         """ Create a new problem
@@ -85,7 +90,12 @@ class ProblemsApiProblems(AbstractApi):
            'masterjudgeId': masterjudgeId
         }
 
-        return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+
+        if 'code' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def get(self, code, shortBody=False):
         """ Retrieve an existing problem
@@ -110,7 +120,12 @@ class ProblemsApiProblems(AbstractApi):
             'shortBody': int(shortBody)
         }
 
-        return self.api_client.call_api(resource_path, method, path_params, query_params)
+        response = self.api_client.call_api(resource_path, method, path_params, query_params)
+
+        if 'code' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def update(self, code, name=None, body=None, _type=None, interactive=None, masterjudgeId=None, activeTestcases=None):
         """ Update an existing problem
@@ -149,7 +164,7 @@ class ProblemsApiProblems(AbstractApi):
 
         path_params = {
            'code': code
-        };
+        }
 
         resource_path = '/problems/{code}'
         method = 'PUT'
@@ -170,7 +185,12 @@ class ProblemsApiProblems(AbstractApi):
         if activeTestcases != None:
             post_params['activeTestcases'] = ','.join(map(str, activeTestcases))
 
-        return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+
+        if not isinstance(response, dict) or response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def updateActiveTestcases(self, code, activeTestcases):
         """ Update active testcases related to the problem
@@ -206,9 +226,14 @@ class ProblemsApiProblems(AbstractApi):
 
         path_params = {
            'problemCode': problemCode
-        };
+        }
 
-        return self.api_client.call_api(resource_path, method, path_params)
+        response = self.api_client.call_api(resource_path, method, path_params)
+
+        if 'testcases' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def createTestcase(self, problemCode, _input='', output='', timelimit=1, judgeId=1, active=True):
         """ Create a problem testcase
@@ -238,7 +263,7 @@ class ProblemsApiProblems(AbstractApi):
 
         path_params = {
            'problemCode': problemCode
-        };
+        }
 
         post_params = {
             'input': _input,
@@ -246,9 +271,14 @@ class ProblemsApiProblems(AbstractApi):
             'timelimit': timelimit,
             'judgeId': judgeId,
             'active': active
-        };
+        }
 
-        return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+
+        if 'number' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def getTestcase(self, problemCode, number):
         """ Retrieve problem testcase
@@ -271,9 +301,14 @@ class ProblemsApiProblems(AbstractApi):
         path_params = {
             'problemCode': problemCode,
             'number': number
-        };
+        }
 
-        return self.api_client.call_api(resource_path, method, path_params)
+        response = self.api_client.call_api(resource_path, method, path_params)
+
+        if 'number' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def updateTestcase(self, problemCode, number, _input=None, output=None, timelimit=None, judgeId=None, active=None):
         """ Update the problem testcase
@@ -321,7 +356,12 @@ class ProblemsApiProblems(AbstractApi):
         if active != None:
             post_params['active'] = active
 
-        return self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
+
+        if not isinstance(response, dict) or response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def deleteTestcase(self, problemCode, number):
         """ Delete the problem testcase
@@ -344,9 +384,14 @@ class ProblemsApiProblems(AbstractApi):
         path_params = {
             'problemCode': problemCode,
             'number': number
-        };
+        }
 
-        return self.api_client.call_api(resource_path, method, path_params)
+        response = self.api_client.call_api(resource_path, method, path_params)
+
+        if not isinstance(response, dict) or response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def getTestcaseFile(self, problemCode, number, filename):
         """ Retrieve a problem testcase file
@@ -378,7 +423,12 @@ class ProblemsApiProblems(AbstractApi):
             'filename': filename
         }
 
-        return self.api_client.call_api(resource_path, method, path_params, response_type='file')
+        response = self.api_client.call_api(resource_path, method, path_params, response_type='file')
+
+        if isinstance(response, dict):
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
 
 class ProblemsApiJudges(AbstractApi):
@@ -403,7 +453,12 @@ class ProblemsApiJudges(AbstractApi):
             'offset': offset
         }
 
-        return self.api_client.call_api(resource_path, method, {}, query_params)
+        response = self.api_client.call_api(resource_path, method, {}, query_params)
+
+        if 'items' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def create(self, sourceCode, compilerId=1, type='testcase', name=''):
         """ Create a new judge
@@ -436,7 +491,12 @@ class ProblemsApiJudges(AbstractApi):
             'name': name,
         }
 
-        return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+
+        if 'id' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def get(self, _id):
         """ Get judge details
@@ -457,7 +517,12 @@ class ProblemsApiJudges(AbstractApi):
             'id': _id
         }
 
-        return self.api_client.call_api(resource_path, method, host_params, )
+        response = self.api_client.call_api(resource_path, method, host_params, )
+
+        if 'id' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
     def update(self, _id, sourceCode=None, compilerId=None, name=None):
         """ Update judge
@@ -497,7 +562,12 @@ class ProblemsApiJudges(AbstractApi):
         if name != None:
             post_params['name'] = name
 
-        return self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
+
+        if not isinstance(response, dict) or response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
 
 class ProblemsApiSubmissions(AbstractApi):
@@ -520,7 +590,12 @@ class ProblemsApiSubmissions(AbstractApi):
           'id': _id
         }
 
-        return self.api_client.call_api(resource_path, method, host_params, )
+        response = self.api_client.call_api(resource_path, method, host_params, )
+
+        if 'id' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
     
     def getMulti(self, ids):
         """ Fetches status of multiple submissions (maximum 20 ids)
@@ -548,7 +623,12 @@ class ProblemsApiSubmissions(AbstractApi):
           'ids': ids
         }
 
-        return self.api_client.call_api(resource_path, method, {}, params)
+        response = self.api_client.call_api(resource_path, method, {}, params)
+
+        if 'items' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
     
     def create(self, problemCode, source, compilerId=None, userId=None, priority=None):#, contestCode=None, private=False):
         """ Create a new submission
@@ -592,7 +672,12 @@ class ProblemsApiSubmissions(AbstractApi):
         #if private:
         #    post_params['private'] = int(private)
 
-        return self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+
+        if 'id' not in response:
+            raise SphereEngineException('invalid or empty response', 422)
+
+        return response
 
 class ProblemsApi(AbstractApi):
 

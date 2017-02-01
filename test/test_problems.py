@@ -61,6 +61,16 @@ class TestProblems(unittest.TestCase):
         self.assertEquals(True, 'shortBody' in self.client.problems.all(shortBody=True)['items'][0])
     
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_all_problems_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getProblems/invalid')
+
+        try:
+            self.client.problems.all()
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getProblem/success')
         problem = self.client.problems.get('TEST')
@@ -82,6 +92,16 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertTrue(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_problem_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getProblem/invalid')
+
+        try:
+            self.client.problems.get('CODE')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_problem_method_success(self, mock_get):
@@ -153,6 +173,16 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_problem_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/createProblem/invalid')
+
+        try:
+            self.client.problems.create('CODE', 'name', 'body', 'binary', False, 1000)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateProblem/success')
         problem_code = 'CODE'
@@ -210,6 +240,16 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_problem_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/updateProblem/invalid')
+
+        try:
+            self.client.problems.update('CODE', 'name')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_active_testcases_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateProblem/success')
         self.client.problems.updateActiveTestcases('TEST', [])
@@ -221,13 +261,23 @@ class TestProblems(unittest.TestCase):
         self.assertEquals(0, self.client.problems.allTestcases('TEST')['testcases'][0]['number'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_get_problem_testcases_method_nonexisting_problem(self, mock_get):
+    def test_all_testcases_method_nonexisting_problem(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingProblem')
         try:
             self.client.problems.allTestcases('NON_EXISTING_CODE')
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_all_testcases_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getProblemTestcases/invalid')
+
+        try:
+            self.client.problems.allTestcases('TEST')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_testcase_method_success(self, mock_get):
@@ -251,6 +301,16 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_problem_testcase_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getProblemTestcase/invalid')
+
+        try:
+            self.client.problems.getTestcase('TEST', 422)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_problem_testcase_method_success(self, mock_get):
@@ -278,9 +338,18 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_problem_testcase_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/createProblemTestcase/invalid')
+
+        try:
+            self.client.problems.createTestcase('TEST', '422', '422', 10, 1, 1)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_testcase_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateProblemTestcase/success')
-        self.client.problems.createTestcase('CODE', 'in0', 'out0', 1, 1, 1)
 
         new_testcase_input = 'in0updated'
         new_testcase_output = 'out0updated'
@@ -326,6 +395,16 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_update_problem_testcase_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/updateProblemTestcase/invalid')
+
+        try:
+            self.client.problems.updateTestcase('TEST', 0, '422', '422', 10, 1, 1)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_delete_problem_testcase_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/deleteProblemTestcase/success')
         self.client.problems.deleteTestcase('CODE', 1)
@@ -347,6 +426,16 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_delete_problem_testcase_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/deleteProblemTestcase/invalid')
+
+        try:
+            self.client.problems.deleteTestcase('TEST', 422)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_testcase_file_method_success(self, mock_get):
@@ -383,12 +472,32 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_problem_testcase_file_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getProblemTestcaseFile/invalid')
+
+        try:
+            self.client.problems.getTestcaseFile('TEST', 422, 'input')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_all_judges_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getJudges/default')
         self.assertEquals(10, self.client.judges.all()['paging']['limit'])
 
         mock_get.return_value = get_mock_data('problems/getJudges/limit')
         self.assertEquals(11, self.client.judges.all(11)['paging']['limit'])
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_all_judges_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getJudges/invalid')
+
+        try:
+            self.client.judges.all()
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_judge_method_success(self, mock_get):
@@ -404,6 +513,16 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_judge_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getJudge/invalid')
+
+        try:
+            self.client.judges.get(422)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_judge_method_success(self, mock_get):
@@ -438,6 +557,16 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_judge_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/createJudge/invalid')
+
+        try:
+            self.client.judges.create('nonempty source', 422, 'testcase', '')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_judge_method_success(self, mock_get):
@@ -492,6 +621,16 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(403, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_update_judge_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/updateJudge/invalid')
+
+        try:
+            self.client.judges.update(422, 'nonempty source', 422, '')
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmission/success')
         self.assertEquals(10, self.client.submissions.get(10)['id'])
@@ -506,6 +645,16 @@ class TestProblems(unittest.TestCase):
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
     
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submission_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getSubmission/invalid')
+
+        try:
+            self.client.submissions.get(422)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submissions_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/two')
@@ -544,6 +693,16 @@ class TestProblems(unittest.TestCase):
         except ValueError:
             self.assertTrue(True)
         
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_get_submissions_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
+
+        try:
+            self.client.submissions.getMulti([422])
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
+
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/createSubmission/success')
@@ -593,3 +752,13 @@ class TestProblems(unittest.TestCase):
             self.assertTrue(False)
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_method_invalid_response(self, mock_get):
+        mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
+
+        try:
+            self.client.submissions.create('TEST', 'nonempty source', 422)
+            self.assertTrue(False)
+        except SphereEngineException as e:
+            self.assertEqual(422, e.code)
