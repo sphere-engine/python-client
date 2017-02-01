@@ -99,7 +99,3 @@ print client.submissions.get(r['id'])
 | Tcl | 	tclsh 8.5.3 |
 | Text | 	plain text |
 | Whitespace | 	wspace 0.3 |
-
-## Unit tests
-
-@todo
