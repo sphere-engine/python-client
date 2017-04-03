@@ -185,16 +185,6 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_get_submission_stream_method_invalid_response(self, mock_get):
-        mock_get.return_value = get_mock_data('compilers/getSubmissionStream/invalid')
-
-        try:
-            self.client.submissions.getStream(422, 'input')
-            self.fail("Sphere Engine Exception with 422 code expected")
-        except SphereEngineException as e:
-            self.assertEqual(422, e.code)
-
-    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/success')
 
