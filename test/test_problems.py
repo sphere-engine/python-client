@@ -465,16 +465,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_get_problem_testcase_file_method_invalid_response(self, mock_get):
-        mock_get.return_value = get_mock_data('problems/getProblemTestcaseFile/invalid')
-
-        try:
-            self.client.problems.getTestcaseFile('TEST', 422, 'input')
-            self.fail("Sphere Engine Exception with 422 code expected")
-        except SphereEngineException as e:
-            self.assertEqual(422, e.code)
-
-    @patch('sphere_engine.ApiClient.make_http_call')
     def test_all_judges_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getJudges/default')
 

@@ -430,9 +430,6 @@ class ProblemsApiProblems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, path_params,
                                             response_type='file')
 
-        if isinstance(response, dict):
-            raise SphereEngineException('invalid or empty response', 422)
-
         return response
 
 
@@ -676,7 +673,7 @@ class ProblemsApiSubmissions(AbstractApi):
             'compilerId': compiler_id,
             'source': source
         }
-        
+
         if user_id != None:
             post_params['userId'] = user_id
 
