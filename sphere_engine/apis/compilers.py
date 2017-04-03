@@ -14,7 +14,8 @@ class CompilersApiSubmissions(AbstractApi):
     Sphere Engine Problems module for submissions
     """
 
-    def create(self, source_code, compiler_id=1, _input='', priority=None):
+    def create(self, source_code, compiler_id=1, _input='', priority=None,
+               experimental=None):
         """ Create submission
 
         :param source_code: source code
@@ -25,6 +26,8 @@ class CompilersApiSubmissions(AbstractApi):
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param experimental: execute in experimental mode (default false)
+        :type : bool
         :returns: submission id
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -49,6 +52,9 @@ class CompilersApiSubmissions(AbstractApi):
         }
         if priority != None:
             post_params['priority'] = priority
+
+        if experimental != None:
+            post_params['experimental'] = bool(experimental)
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {},
                                             post_params=post_params,)
