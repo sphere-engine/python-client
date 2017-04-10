@@ -430,9 +430,6 @@ class ProblemsApiProblems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, path_params,
                                             response_type='file')
 
-        if isinstance(response, dict):
-            raise SphereEngineException('invalid or empty response', 422)
-
         return response
 
 
@@ -641,7 +638,7 @@ class ProblemsApiSubmissions(AbstractApi):
         return response
 
     def create(self, problem_code, source, compiler_id=None, user_id=None,
-               priority=None):#, contestCode=None, private=False):
+               priority=None, experimental=None):
         """ Create a new submission
 
         :param problem_code: problem code
@@ -654,6 +651,8 @@ class ProblemsApiSubmissions(AbstractApi):
         :type user_id: integer
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param experimental: execute in experimental mode (default false)
+        :type : bool
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException: code 401 for invalid access token
@@ -674,14 +673,15 @@ class ProblemsApiSubmissions(AbstractApi):
             'compilerId': compiler_id,
             'source': source
         }
+
         if user_id != None:
             post_params['userId'] = user_id
+
         if priority != None:
             post_params['priority'] = priority
-        #if contestCode != None:
-        #    post_params['contestCode'] = contestCode
-        #if private:
-        #    post_params['private'] = int(private)
+
+        if experimental != None:
+            post_params['experimental'] = bool(experimental)
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
