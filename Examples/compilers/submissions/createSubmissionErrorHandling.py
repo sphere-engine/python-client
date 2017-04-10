@@ -12,7 +12,7 @@ endpoint = '<endpoint>'
 client = CompilersClientV3(accessToken, endpoint)
 
 # API usage
-source = 'int main() { return 0; }'
+source = '<source code>'
 compiler = 11 # C language
 input = '2016'
 
