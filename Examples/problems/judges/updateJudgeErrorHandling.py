@@ -12,7 +12,7 @@ endpoint = '<endpoint>'
 client = ProblemsClientV3(accessToken, endpoint)
 
 # API usage
-source = 'int main() { return 0; }'
+source = '<source code>'
 nonexistingCompiler = 9999
 
 try:

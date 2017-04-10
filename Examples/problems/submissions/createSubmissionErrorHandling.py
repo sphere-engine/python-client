@@ -13,7 +13,7 @@ client = ProblemsClientV3(accessToken, endpoint)
 
 # API usage
 problemCode = 'TEST'
-source = 'int main() { return 0; }'
+source = '<source code>'
 nonexistingCompiler = 99999;
 
 try:

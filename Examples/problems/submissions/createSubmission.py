@@ -12,7 +12,7 @@ client = ProblemsClientV3(accessToken, endpoint)
 
 # API usage
 problemCode = 'TEST'
-source = 'int main() { return 0; }'
+source = '<source code>'
 compiler = 11 # C language
 
 response = client.submissions.create(problemCode, source, compiler)
