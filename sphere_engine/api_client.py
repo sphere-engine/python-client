@@ -9,6 +9,7 @@ Sphere Engine API
 from __future__ import absolute_import
 
 import sys
+import re
 from datetime import datetime
 from datetime import date
 # python 2 and python 3 compatibility library
@@ -77,6 +78,7 @@ class ApiClient(object):
                 version
             )
         else:
+            endpoint = re.sub('(^https?://)', '', endpoint.lower())
             host = '%s://%s/api/%s' % (
                 self.host_protocol,
                 endpoint,
