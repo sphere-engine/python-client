@@ -37,7 +37,35 @@ def get_mock_data(data_json_path):
         :rtype: dict
     """
 
-    with open('./client-commons/mockData.json') as mock_data:
+    return _get_mock_data(data_json_path)
+
+def get_mock_dataV4(data_json_path):
+	"""
+    Gets data from JSON mock file.
+
+        :param data_json_path: path to data in json file
+        :type data_json_path: string
+        :raises IOError on nonexisting JSON file
+        :raises KeyError on nonexisting data in JSON
+        :returns: data from json file
+        :rtype: dict
+    """
+	
+	return _get_mock_data(data_json_path, 'V4')
+        
+def _get_mock_data(data_json_path, version = ''):
+    """
+    Gets data from JSON mock file.
+
+        :param data_json_path: path to data in json file
+        :type data_json_path: string
+        :raises IOError on nonexisting JSON file
+        :raises KeyError on nonexisting data in JSON
+        :returns: data from json file
+        :rtype: dict
+    """
+    
+    with open('./client-commons/mockData'+version+'.json') as mock_data:
         mock_data = json.load(mock_data)
         path_array = data_json_path.split('/')
 
@@ -55,3 +83,4 @@ def get_mock_data(data_json_path):
             'conn_errno': conn_errno,
             'conn_error': conn_error,
         }
+
