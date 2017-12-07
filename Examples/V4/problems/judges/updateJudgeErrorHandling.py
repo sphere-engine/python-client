@@ -23,6 +23,6 @@ except SphereEngineException as e:
     elif e.code == 403:
         print('Access to the judge is forbidden')
     elif e.code == 404:
-    	print('Judge does not exist')
-	elif e.code == 400:
-		print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))
+        print('Judge does not exist')
+    elif e.code == 400:
+        print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))

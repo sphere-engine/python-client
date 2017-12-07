@@ -4,8 +4,8 @@ Example presents usage of the successful submissions.createMultiFiles() API meth
 from sphere_engine import CompilersClientV4
 
 # define access parameters
-accessToken = 'cf2fb7f72657ec8df3cc0e79e3a9dc02'
-endpoint = 'sec.dev-container.lo:8080'
+accessToken = '<access_token>'
+endpoint = '<endpoint>'
 
 # initialization
 client = CompilersClientV4(accessToken, endpoint)

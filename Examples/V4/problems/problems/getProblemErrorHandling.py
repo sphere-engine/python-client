@@ -20,6 +20,6 @@ except SphereEngineException as e:
     if e.code == 401:
         print('Invalid access token')
     elif e.code == 403:
-    	print('Access to the problem is forbidden')
+        print('Access to the problem is forbidden')
     elif e.code == 404:
         print('Problem does not exist')

@@ -26,6 +26,6 @@ except SphereEngineException as e:
     if e.code == 401:
         print('Invalid access token')
     elif e.code == 402:
-    	print('Unable to create submission')
+        print('Unable to create submission')
     elif e.code == 400:
-    	print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))
+        print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))

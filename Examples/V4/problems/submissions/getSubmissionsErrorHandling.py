@@ -16,6 +16,6 @@ try:
     response = client.submissions.getMulti([2017, 2018])
 except SphereEngineException as e:
     if e.code == 401:
-    	print('Invalid access token')
+        print('Invalid access token')
     elif e.code == 400:
-    	print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))
+        print('Error code: ' + str(e.error_code) + ', details available in the message: ' + str(e))

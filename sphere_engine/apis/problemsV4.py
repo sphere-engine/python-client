@@ -542,7 +542,7 @@ class ProblemsApiV4Judges(AbstractApi):
         return response
 
     def getJudgeFile(self, _id, filename):
-    	""" Retrieve a judge file
+        """ Retrieve a judge file
 
         :param _id: judge id
         :type _id: integer
@@ -552,12 +552,12 @@ class ProblemsApiV4Judges(AbstractApi):
         :rtype: string
         :raises SphereEngineException
         """
-    	
-    	resource_path = '/judges/{id}/{filename}'
+        
+        resource_path = '/judges/{id}/{filename}'
         method = 'GET'
 
         if filename not in ['source']:
-        	raise SphereEngineException('non existing file', 404)
+            raise SphereEngineException('non existing file', 404)
 
         path_params = {
             'id': _id,
@@ -565,7 +565,7 @@ class ProblemsApiV4Judges(AbstractApi):
         }
 
         response = self.api_client.call_api(resource_path, method, path_params,
-        	response_type='file')
+            response_type='file')
 
         return response
 
@@ -600,7 +600,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         return response
 
     def getSubmissionFile(self, _id, filename):
-    	""" Retrieve a submission file
+        """ Retrieve a submission file
 
         :param _id: submission id
         :type _id: integer
@@ -610,12 +610,12 @@ class ProblemsApiV4Submissions(AbstractApi):
         :rtype: string
         :raises SphereEngineException
         """
-    	
-    	resource_path = '/submissions/{id}/{filename}'
+        
+        resource_path = '/submissions/{id}/{filename}'
         method = 'GET'
 
         if filename not in ['source', 'stdout', 'stderr', 'cmperr', 'psinfo']:
-        	raise SphereEngineException('non existing file', 404)
+            raise SphereEngineException('non existing file', 404)
 
         path_params = {
             'id': _id,
@@ -623,7 +623,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         }
 
         response = self.api_client.call_api(resource_path, method, path_params,
-        	response_type='file')
+            response_type='file')
 
         return response
 
@@ -660,8 +660,8 @@ class ProblemsApiV4Submissions(AbstractApi):
         return response
     
     def create(self, problem_code, source, compiler_id=None, private=False,
-    	priority=None, tests=[]):
-    	""" Create a new submission
+        priority=None, tests=[]):
+        """ Create a new submission
 
         :param problem_code: problem code
         :type problem_code: string
@@ -679,12 +679,12 @@ class ProblemsApiV4Submissions(AbstractApi):
         :rtype: json
         :raises SphereEngineException
         """
-    	
-    	return self.__create(problem_code, source, compiler_id, private, priority, {}, tests)
+        
+        return self.__create(problem_code, source, compiler_id, private, priority, {}, tests)
         
     def createMultiFiles(self, problem_code, files, compiler_id=None, private=False,
-    	priority=None, tests=[]):
-    	""" Create a new submission with multi files
+        priority=None, tests=[]):
+        """ Create a new submission with multi files
 
         :param problem_code: problem code
         :type problem_code: string
@@ -702,12 +702,12 @@ class ProblemsApiV4Submissions(AbstractApi):
         :rtype: json
         :raises SphereEngineException
         """
-    	
-    	return self.__create(problem_code, '', compiler_id, private, priority, files, tests)
+        
+        return self.__create(problem_code, '', compiler_id, private, priority, files, tests)
 
     def createWithTarSource(self, problem_code, tar_source, compiler_id=None, private=False,
-    	priority=None, tests=[]):
-    	""" Create a new submission from tar source
+        priority=None, tests=[]):
+        """ Create a new submission from tar source
 
         :param problem_code: problem code
         :type problem_code: string
@@ -725,8 +725,8 @@ class ProblemsApiV4Submissions(AbstractApi):
         :rtype: json
         :raises SphereEngineException
         """
-    	
-    	return self.__create(problem_code, tar_source, compiler_id, private, priority, {}, tests)
+        
+        return self.__create(problem_code, tar_source, compiler_id, private, priority, {}, tests)
         
     def __create(self, problem_code, source, compiler_id=None, private=False,
                priority=None, files={}, tests=[]):
@@ -783,7 +783,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         return response
     
     def update(self, _id, private=None):
-    	""" Update an existing submission
+        """ Update an existing submission
 
         :param _id: submission id
         :type _id: integer
@@ -795,7 +795,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         """
 
         path_params = {
-        	'id': _id
+            'id': _id
         }
 
         resource_path = '/submissions/{id}'
@@ -803,12 +803,12 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         post_params = {}
         if private != None:
-        	post_params['private'] = private
+            post_params['private'] = private
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
         if not isinstance(response, dict) or response:
-        	raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('invalid or empty response', 422)
 
         return response
 

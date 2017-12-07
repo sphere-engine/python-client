@@ -16,8 +16,8 @@ try:
     response = client.submissions.get(2017)
 except SphereEngineException as e:
     if e.code == 401:
-    	print('Invalid access token')
+        print('Invalid access token')
     elif e.code == 403:
-    	print('Access to the submission is forbidden')
+        print('Access to the submission is forbidden')
     elif e.code == 404:
-    	print('Submission does not exist')
+        print('Submission does not exist')

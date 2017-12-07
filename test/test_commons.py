@@ -40,7 +40,7 @@ def get_mock_data(data_json_path):
     return _get_mock_data(data_json_path)
 
 def get_mock_dataV4(data_json_path):
-	"""
+    """
     Gets data from JSON mock file.
 
         :param data_json_path: path to data in json file
@@ -50,8 +50,8 @@ def get_mock_dataV4(data_json_path):
         :returns: data from json file
         :rtype: dict
     """
-	
-	return _get_mock_data(data_json_path, 'V4')
+    
+    return _get_mock_data(data_json_path, 'V4')
         
 def _get_mock_data(data_json_path, version = ''):
     """
