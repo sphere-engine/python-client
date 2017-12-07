@@ -219,7 +219,6 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(422, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/success')
     
@@ -235,7 +234,6 @@ class TestCompilers(unittest.TestCase):
         self.assertTrue(submission_id > 0, 'New submission id should be greater than 0')
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_wrong_compiler(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingCompiler')
 
@@ -248,7 +246,6 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/invalid')
 
@@ -259,7 +256,6 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(422, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/success')
     
@@ -273,7 +269,6 @@ class TestCompilers(unittest.TestCase):
         self.assertTrue(submission_id > 0, 'New submission id should be greater than 0')
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_wrong_compiler(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingCompiler')
 
@@ -286,7 +281,6 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/createSubmission/invalid')
 

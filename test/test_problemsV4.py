@@ -512,14 +512,12 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_judge_file_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getJudgeFile/source')
     
         self.assertEqual('source0', self.client.judges.getJudgeFile(1, 'source'))
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_judge_file_method_nonexisting_judge(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingJudge')
     
@@ -531,7 +529,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_judge_file_method_nonexisting_file(self, mock_get):
         try:
             self.client.judges.getJudgeFile(1, 'fakefile')
@@ -658,7 +655,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(422, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_submission_file_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissionFile/source')
         self.assertEqual('source0', self.client.submissions.getSubmissionFile(1, 'source'))
@@ -676,7 +672,6 @@ class TestProblems(unittest.TestCase):
         self.assertEqual('psinfo0', self.client.submissions.getSubmissionFile(1, 'psinfo'))
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_submission_file_method_nonexisting_submission(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingSubmission')
         
@@ -688,7 +683,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
                 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_get_submission_file_method_nonexisting_file(self, mock_get):
         try:
             self.client.submissions.getSubmissionFile(1, 'fakefile')
@@ -784,7 +778,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(422, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/createSubmission/success')
     
@@ -797,7 +790,6 @@ class TestProblems(unittest.TestCase):
         self.assertTrue(submission_id > 0, 'Creation method should return new submission ID')
     
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_nonexisting_problem(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingProblem')
 
@@ -808,7 +800,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_nonexisting_compiler(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingCompiler')
 
@@ -820,7 +811,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_multi_files_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
 
@@ -831,7 +821,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(422, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/createSubmission/success')
     
@@ -840,7 +829,6 @@ class TestProblems(unittest.TestCase):
         self.assertTrue(submission_id > 0, 'Creation method should return new submission ID')
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_nonexisting_problem(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingProblem')
 
@@ -851,7 +839,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_nonexisting_compiler(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/nonexistingCompiler')
 
@@ -863,7 +850,6 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_create_submission_with_tar_source_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
 
@@ -874,14 +860,12 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(422, e.code)
     
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_update_submission_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateSubmission/success')
         
         response = self.client.submissions.update(1, True)
         
     @patch('sphere_engine.ApiClient.make_http_call')
-    # TODO nowe
     def test_update_submission_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateSubmission/invalid')
     
