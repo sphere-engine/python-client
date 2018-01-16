@@ -88,7 +88,7 @@ class ApiClient(object):
         return host
 
     def call_api(self, resource_path, method, path_params=None, query_params=None,
-                 header_params=None, post_params=None, response_type=None):
+                 header_params=None, post_params=None, files_params=None, response_type=None):
         """ Call method
 
         :param resource_path: api method path
@@ -103,6 +103,8 @@ class ApiClient(object):
         :type header_params: dict
         :param post_params: post data parameters
         :type post_params: dict
+        :param files_params: files data parameters
+        :type files_params: dict
         :param response_type: response type, file|json
         :type response_type: string
         :returns: api response
@@ -110,7 +112,7 @@ class ApiClient(object):
         """
 
         http_response = self.make_http_call(resource_path, method, path_params,
-                                            query_params, header_params, post_params)
+                                            query_params, header_params, post_params, files_params)
         response = self.process_response(http_response, response_type)
         return response
 
@@ -145,7 +147,7 @@ class ApiClient(object):
 
 
     def make_http_call(self, resource_path, method, path_params=None, query_params=None,
-                       header_params=None, post_params=None):
+                       header_params=None, post_params=None, files_params=None):
         """ HTTP call method
 
         :param resource_path: api method path
@@ -160,6 +162,8 @@ class ApiClient(object):
         :type header_params: dict
         :param post_params: post data parameters
         :type post_params: dict
+        :param files_params: files data parameters
+        :type files_params: dict
         :returns: data from http call
         :rtype: dict
         """
@@ -187,6 +191,9 @@ class ApiClient(object):
         if post_params:
             post_params = self.sanitize_for_serialization(post_params)
 
+        if not files_params:
+            files_params = {}
+
         # request url
         url = self.host + resource_path
 
@@ -194,7 +201,8 @@ class ApiClient(object):
         response_data = self.request(method, url,
                                      query_params=query_params,
                                      headers=header_params,
-                                     post_params=post_params)
+                                     post_params=post_params,
+                                     files_params=files_params)
 
         return {
             'http_code': response_data.status_code,
@@ -204,7 +212,7 @@ class ApiClient(object):
         }
 
     def request(self, method, url, query_params=None, headers=None,
-                post_params=None):
+                post_params=None, files_params=None):
         """
         Makes the HTTP request using requests library.
 
@@ -221,10 +229,10 @@ class ApiClient(object):
             response = requests.head(url, params=query_params, headers=headers)
 
         elif method == "POST":
-            response = requests.post(url, params=query_params, headers=headers, data=post_params, )
+            response = requests.post(url, params=query_params, headers=headers, data=post_params, files=files_params)
 
         elif method == "PUT":
-            response = requests.put(url, params=query_params, headers=headers, data=post_params, )
+            response = requests.put(url, params=query_params, headers=headers, data=post_params, files=files_params)
 
         elif method == "DELETE":
             response = requests.delete(url, params=query_params, headers=headers)

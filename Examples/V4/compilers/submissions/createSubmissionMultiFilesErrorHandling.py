@@ -12,12 +12,15 @@ endpoint = '<endpoint>'
 client = CompilersClientV4(accessToken, endpoint)
 
 # API usage
-source = '<source code>'
+files = {
+    'prog.c': '<source_code>',
+    'prog.h': '<source_code>'
+}
 compiler = 11 # C language
 input = '2017'
 
 try:
-    response = client.submissions.create(source, compiler, input)
+    response = client.submissions.createMultiFiles(files, compiler, input)
     # response['id'] stores the ID of the created submission
 except SphereEngineException as e:
     if e.code == 401:

@@ -565,7 +565,7 @@ class ProblemsApiV4Judges(AbstractApi):
         }
 
         response = self.api_client.call_api(resource_path, method, path_params,
-            response_type='file')
+                                            response_type='file')
 
         return response
 
@@ -623,7 +623,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         }
 
         response = self.api_client.call_api(resource_path, method, path_params,
-            response_type='file')
+                                            response_type='file')
 
         return response
 
@@ -760,22 +760,22 @@ class ProblemsApiV4Submissions(AbstractApi):
             'source': source,
             'private': bool(private)
         }
+        files_params = {}
 
         if priority != None:
             post_params['priority'] = priority
             
         if len(files):
-            _files = {}
             for k, v in files.items():
                 if not isinstance(v, six.string_types):
                     continue
-                post_params['files['+k+']'] = v;
+                files_params['files['+k+']'] = v;
             post_params['source'] = ''
 
         if len(tests):
             post_params['tests'] = ','.join(tests);    
 
-        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params, files_params)
 
         if 'id' not in response:
             raise SphereEngineException('invalid or empty response', 422)

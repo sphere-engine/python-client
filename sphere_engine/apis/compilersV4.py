@@ -97,15 +97,17 @@ class CompilersApiV4Submissions(AbstractApi):
             'compilerId': c_id,
             'input': _input
         }
+        files_params = {}
+
         if priority != None:
             post_params['priority'] = priority
 
         if len(files):
-            _files = {}
             for k, v in files.items():
                 if not isinstance(v, six.string_types):
                     continue
-                post_params['files['+k+']'] = v;
+                files_params['files['+k+']'] = (k, v);
+            post_params['source'] = ''
 
         if time_limit != None:
             post_params['timeLimit'] = time_limit
@@ -114,7 +116,7 @@ class CompilersApiV4Submissions(AbstractApi):
             post_params['memoryLimit'] = memory_limit
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {},
-            post_params=post_params,)
+            post_params=post_params, files_params=files_params)
 
         if 'id' not in response:
             raise SphereEngineException('invalid or empty response', 422)
@@ -139,7 +141,7 @@ class CompilersApiV4Submissions(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, {'id': _id})
 
-        if 'status' not in response:
+        if 'result' not in response:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response

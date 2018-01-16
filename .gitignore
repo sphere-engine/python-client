@@ -12,3 +12,4 @@ cover
 build/
 .settings
 .vscode
+.idea
