@@ -189,7 +189,7 @@ class ProblemsApiProblems(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
-        if not isinstance(response, dict) or response:
+        if response is not True:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
@@ -362,7 +362,7 @@ class ProblemsApiProblems(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
-        if not isinstance(response, dict) or response:
+        if response is not True:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
@@ -569,7 +569,7 @@ class ProblemsApiJudges(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
 
-        if not isinstance(response, dict) or response:
+        if response is not True:
             raise SphereEngineException('invalid or empty response', 422)
 
         return response
