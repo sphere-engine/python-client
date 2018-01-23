@@ -19,7 +19,7 @@ Or you can install from PyPI:
 pip install sphere-engine
 ```
 
-To use the bindings, import the pacakge:
+To use the bindings, import the package:
 
 ```python
 import sphere_engine
