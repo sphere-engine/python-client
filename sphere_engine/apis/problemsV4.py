@@ -41,25 +41,25 @@ class ProblemsApiV4Problems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {}, query_params)
 
         if 'paging' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def create(self, code, name, body='', _type='bin', interactive=False, masterjudge_id=1001):
+    def create(self, name, masterjudge_id, body='', type_id=0, interactive=False, code=None):
         """ Create a new problem
 
-        :param code: problem code
-        :type code: string
         :param name: problem name
         :type name: string
+        :param masterjudge_id: masterjudge id
+        :type masterjudge_id: integer
         :param body: problem body
         :type body: string
-        :param _type: problem type (default 'bin')
-        :type _type: string ('binary', 'min' or 'max')
+        :param type_id: problem type id (0-binary, 1-minimize, 2-maximize) (default 0)
+        :type type_id: string
         :param interactive: interactive problem flag (default False)
         :type interactive: bool
-        :param masterjudge_id: masterjudge id (default 1001, i.e. % of correctly solved testcases)
-        :type masterjudge_id: integer
+        :param code: problem code
+        :type code: string
         :returns: code of created problem
         :rtype: json
         :raises SphereEngineException
@@ -74,30 +74,32 @@ class ProblemsApiV4Problems(AbstractApi):
         if name == '':
             raise SphereEngineException('empty name', 400)
 
-        if _type not in ['min', 'max', 'bin', 'minimize', 'maximize', 'binary']:
+        if type_id not in [0, 1, 2]:
             raise SphereEngineException('wrong type', 400)
 
         post_params = {
-            'code': code,
             'name': name,
             'body': body,
-            'type': _type,
+            'typeId': type_id,
             'interactive': interactive,
             'masterjudgeId': masterjudge_id
         }
 
+        if code is not None:
+            post_params['code'] = code
+
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
-        if 'code' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+        if 'id' not in response:
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def get(self, code, short_body=False):
+    def get(self, _id, short_body=False):
         """ Retrieve an existing problem
 
-        :param code: problem code
-        :type code: string
+        :param _id: problem id
+        :type _id: integer
         :param short_body: determines whether shortened body should be returned (default False)
         :type short_body: bool
         :returns: problem details
@@ -105,11 +107,11 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{code}'
+        resource_path = '/problems/{id}'
         method = 'GET'
 
         path_params = {
-            'code': code
+            'id': _id
         }
         query_params = {
             'shortBody': int(short_body)
@@ -117,47 +119,45 @@ class ProblemsApiV4Problems(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, path_params, query_params)
 
-        if 'code' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+        if 'id' not in response:
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def update(self, code, name=None, body=None, _type=None, interactive=None,
-               masterjudge_id=None, active_testcases=None):
+    def update(self, _id, name=None, masterjudge_id=None, body=None, type_id=None, interactive=None,
+               active_testcases=None):
         """ Update an existing problem
 
-        :param code: problem code
-        :type code: string
+        :param _id: problem id
+        :type _id: integer
         :param name: problem name (default None)
         :type name: string
-        :param body: problem body (default None)
-        :type body: string
-        :param _type: problem type (default None)
-        :type _type: string ('binary', 'min' or 'max')
-        :param interactive: interactive problem flag (default None)
-        :type interactive: bool
         :param masterjudge_id: masterjudge id (default None)
         :type masterjudge_id: integer
+        :param body: problem body (default None)
+        :type body: string
+        :param type_id: problem type id (0-binary, 1-minimize, 2-maximize) (default None)
+        :type type_id: string
+        :param interactive: interactive problem flag (default None)
+        :type interactive: bool
         :param active_testcases: list of active testcases IDs (default None)
         :type active_testcases: List[integer]
-        :returns: code of created problem
-        :rtype: json
         :returns: void
         :rtype: json
         :raises SphereEngineException
         """
 
-        if code == '':
-            raise SphereEngineException('empty code', 400)
+        if _id == '':
+            raise SphereEngineException('empty id', 400)
 
         if name == '':
             raise SphereEngineException('empty name', 400)
 
         path_params = {
-            'code': code
+            'id': _id
         }
 
-        resource_path = '/problems/{code}'
+        resource_path = '/problems/{id}'
         method = 'PUT'
 
         post_params = {}
@@ -165,10 +165,10 @@ class ProblemsApiV4Problems(AbstractApi):
             post_params['name'] = name
         if body != None:
             post_params['body'] = body
-        if _type != None:
-            if _type not in ['min', 'max', 'bin', 'minimize', 'maximize', 'binary']:
-                raise SphereEngineException('wrong type', 400)
-            post_params['type'] = _type
+        if type_id != None:
+            if type_id not in [0,1,2]:
+                raise SphereEngineException('wrong type id', 400)
+            post_params['typeId'] = type_id
         if interactive != None:
             post_params['interactive'] = 1 if interactive else 0
         if masterjudge_id != None:
@@ -179,15 +179,15 @@ class ProblemsApiV4Problems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
         if not isinstance(response, dict) or response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def updateActiveTestcases(self, code, active_testcases):
+    def updateActiveTestcases(self, _id, active_testcases):
         """ Update active testcases related to the problem
 
-        :param code: problem code
-        :type code: string
+        :param _id: problem id
+        :type _id: integer
         :param active_testcases: list of active testcases IDs
         :type active_testcases: List[integer]
         :returns: void
@@ -195,45 +195,45 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        self.update(code, active_testcases=active_testcases)
+        self.update(_id, active_testcases=active_testcases)
 
-    def allTestcases(self, problem_code):
+    def allTestcases(self, problem_id):
         """ Retrieve list of problem testcases
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_id: problem code
+        :type problem_id: integer
         :returns: problem testcases
         :rtype: json
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases'
+        resource_path = '/problems/{problemId}/testcases'
         method = 'GET'
 
         path_params = {
-            'problemCode': problem_code
+            'problemId': problem_id
         }
 
         response = self.api_client.call_api(resource_path, method, path_params)
 
         if 'testcases' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def createTestcase(self, problem_code, _input='', output='', timelimit=1,
+    def createTestcase(self, problem_id, _input='', output='', time_limit=1,
                        judge_id=1, active=True):
         """ Create a problem testcase
 
-        :param problem_code: problem code
-        :type problem_code: string
+        :param problem_id: problem id
+        :type problem_id: integer
         :param _input: model input data (default '')
         :type _input: string
         :param output: model output data (default '')
         :type output: string
-        :param timelimit: time limit in seconds (default 1)
-        :type timelimit: double
-        :param judge_id: judge id (default 1, i.e. Ignore extra whitespaces)
+        :param time_limit: time limit in seconds (default 1)
+        :type time_limit: double
+        :param judge_id: judge id
         :type judge_id: integer
         :param active: if test should be active (default True)
         :type active: bool
@@ -242,17 +242,17 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases'
+        resource_path = '/problems/{problemId}/testcases'
         method = 'POST'
 
         path_params = {
-            'problemCode': problem_code
+            'problemId': problem_id
         }
 
         post_params = {
             'input': _input,
             'output': output,
-            'timelimit': timelimit,
+            'timeLimit': time_limit,
             'judgeId': judge_id,
             'active': active
         }
@@ -260,15 +260,15 @@ class ProblemsApiV4Problems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
         if 'number' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def getTestcase(self, problem_code, number):
+    def getTestcase(self, problem_id, number):
         """ Retrieve problem testcase
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_id: problem id
+        :type problem_id: integer
         :param number: testcase number
         :type number: integer
         :returns: testcase details
@@ -276,35 +276,35 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases/{number}'
+        resource_path = '/problems/{problemId}/testcases/{number}'
         method = 'GET'
 
         path_params = {
-            'problemCode': problem_code,
+            'problemId': problem_id,
             'number': number
         }
 
         response = self.api_client.call_api(resource_path, method, path_params)
 
         if 'number' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def updateTestcase(self, problem_code, number, _input=None, output=None,
-                       timelimit=None, judge_id=None, active=None):
+    def updateTestcase(self, problem_id, number, _input=None, output=None,
+                       time_limit=None, judge_id=None, active=None):
         """ Update the problem testcase
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problemId: problem id
+        :type problemId: integer
         :param number: testcase number
         :type number: integer
         :param _input: model input data (default None)
         :type _input: string
         :param output: model output data (default None)
         :type output: string
-        :param timelimit: time limit in seconds (default None)
-        :type timelimit: double
+        :param time_limit: time limit in seconds (default None)
+        :type time_limit: double
         :param judgeId: judge id (default None)
         :type judgeId: integer
         :param active: if test should be active (default None)
@@ -314,11 +314,11 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases/{number}'
+        resource_path = '/problems/{problemId}/testcases/{number}'
         method = 'PUT'
 
         path_params = {
-            'problemCode': problem_code,
+            'problemId': problem_id,
             'number': number
         }
 
@@ -327,8 +327,8 @@ class ProblemsApiV4Problems(AbstractApi):
             post_params['input'] = _input
         if output != None:
             post_params['output'] = output
-        if timelimit != None:
-            post_params['timelimit'] = timelimit
+        if time_limit != None:
+            post_params['timeLimit'] = time_limit
         if judge_id != None:
             post_params['judgeId'] = judge_id
         if active != None:
@@ -337,15 +337,15 @@ class ProblemsApiV4Problems(AbstractApi):
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
         if not isinstance(response, dict) or response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def deleteTestcase(self, problem_code, number):
+    def deleteTestcase(self, problem_id, number):
         """ Delete the problem testcase
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_id: problem id
+        :type problem_id: integer
         :param number: testcase number
         :type number: integer
         :returns: void
@@ -353,43 +353,43 @@ class ProblemsApiV4Problems(AbstractApi):
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases/{number}'
+        resource_path = '/problems/{problemId}/testcases/{number}'
         method = 'DELETE'
 
         path_params = {
-            'problemCode': problem_code,
+            'problemId': problem_id,
             'number': number
         }
 
         response = self.api_client.call_api(resource_path, method, path_params)
 
         if not isinstance(response, dict) or response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def getTestcaseFile(self, problem_code, number, filename):
+    def getTestcaseFile(self, problem_id, number, filename):
         """ Retrieve a problem testcase file
 
-        :param problemCode: problem code
-        :type problemCode: string
+        :param problem_id: problem code
+        :type problem_id: integer
         :param number: testcase number
         :type number: integer
-        :param filename: filename
+        :param filename: filename (input|output)
         :type filename: string
         :returns: file content
         :rtype: string
         :raises SphereEngineException
         """
 
-        resource_path = '/problems/{problemCode}/testcases/{number}/{filename}'
+        resource_path = '/problems/{problemId}/testcases/{number}/{filename}'
         method = 'GET'
 
         if filename not in ['input', 'output']:
             raise SphereEngineException('non existing file', 404)
 
         path_params = {
-            'problemCode': problem_code,
+            'problemId': problem_id,
             'number': number,
             'filename': filename
         }
@@ -405,13 +405,15 @@ class ProblemsApiV4Judges(AbstractApi):
     Sphere Engine Problems module for judge
     """
 
-    def all(self, limit=10, offset=0, _type='testcase'):
+    def all(self, limit=10, offset=0, type_id=0):
         """ List of all judges
 
         :param limit: number of judges to get (default 10)
         :type limit: integer
         :param offset: starting number (default 0)
         :type offset: integer
+        :param type_id: type id of judge to be retrieved (0-test case, 1-master)
+        :type type_id: integer
         :returns: list of judges
         :rtype: json
         :raises SphereEngineException
@@ -423,25 +425,25 @@ class ProblemsApiV4Judges(AbstractApi):
         query_params = {
             'limit': limit,
             'offset': offset,
-            'type': _type
+            'typeId': type_id
         }
 
         response = self.api_client.call_api(resource_path, method, {}, query_params)
 
         if 'items' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
-    def create(self, source_code, compiler_id=1, _type='testcase', name='', shared=False):
+    def create(self, source_code, compiler_id=1, type_id=0, name='', shared=False):
         """ Create a new judge
 
         :param source_code: judge source code
         :type source_code: string
         :param compiler_id: compiler id (default 1, i.e. C++)
         :type compiler_id: integer
-        :param _type: judge type
-        :type _type: string ('testcase' or 'master')
+        :param type_id: judge type id (0-test case, 1-master)
+        :type type_id: integer
         :param name: judge name (default '')
         :type name: string
         :param shared: shared (default False)
@@ -460,7 +462,7 @@ class ProblemsApiV4Judges(AbstractApi):
         post_params = {
             'source': source_code,
             'compilerId': compiler_id,
-            'type': _type,
+            'typeId': type_id,
             'name': name,
             'shared': shared
         }
@@ -468,7 +470,7 @@ class ProblemsApiV4Judges(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
         if 'id' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -492,7 +494,7 @@ class ProblemsApiV4Judges(AbstractApi):
         response = self.api_client.call_api(resource_path, method, host_params, )
 
         if 'id' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -537,7 +539,7 @@ class ProblemsApiV4Judges(AbstractApi):
         response = self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
 
         if not isinstance(response, dict) or response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -546,7 +548,7 @@ class ProblemsApiV4Judges(AbstractApi):
 
         :param _id: judge id
         :type _id: integer
-        :param filename: filename
+        :param filename: filename (source)
         :type filename: string
         :returns: file content
         :rtype: string
@@ -595,7 +597,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         response = self.api_client.call_api(resource_path, method, host_params, )
 
         if 'id' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -604,7 +606,7 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         :param _id: submission id
         :type _id: integer
-        :param filename: filename
+        :param filename: filename (source|output|error|cmpinfo|debug)
         :type filename: string
         :returns: file content
         :rtype: string
@@ -614,7 +616,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         resource_path = '/submissions/{id}/{filename}'
         method = 'GET'
 
-        if filename not in ['source', 'stdout', 'stderr', 'cmperr', 'psinfo']:
+        if filename not in ['source', 'output', 'error', 'cmpinfo', 'debug']:
             raise SphereEngineException('non existing file', 404)
 
         path_params = {
@@ -655,22 +657,19 @@ class ProblemsApiV4Submissions(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {}, params)
 
         if 'items' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
     
-    def create(self, problem_code, source, compiler_id=None, private=False,
-        priority=None, tests=[]):
+    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[]):
         """ Create a new submission
 
-        :param problem_code: problem code
-        :type problem_code: string
+        :param problem_id: problem id (or code)
+        :type problem_id: integer
         :param source: submission source code
         :type source: string
         :param compiler_id: compiler id
         :type compiler_id: integer
-        :param private: private (default False)
-        :type private: bool
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type priority: integer
         :param tests: tests to run (default [])
@@ -680,20 +679,17 @@ class ProblemsApiV4Submissions(AbstractApi):
         :raises SphereEngineException
         """
         
-        return self.__create(problem_code, source, compiler_id, private, priority, {}, tests)
+        return self.__create(problem_id, source, compiler_id, priority, {}, tests)
         
-    def createMultiFiles(self, problem_code, files, compiler_id=None, private=False,
-        priority=None, tests=[]):
+    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[]):
         """ Create a new submission with multi files
 
-        :param problem_code: problem code
-        :type problem_code: string
+        :param problem_id: problem id (or code)
+        :type problem_id: integer
         :param files: files (default {})
         :type tests: dict
         :param compiler_id: compiler id
         :type compiler_id: integer
-        :param private: private (default False)
-        :type private: bool
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type priority: integer
         :param tests: tests to run (default [])
@@ -703,20 +699,17 @@ class ProblemsApiV4Submissions(AbstractApi):
         :raises SphereEngineException
         """
         
-        return self.__create(problem_code, '', compiler_id, private, priority, files, tests)
+        return self.__create(problem_id, '', compiler_id, priority, files, tests)
 
-    def createWithTarSource(self, problem_code, tar_source, compiler_id=None, private=False,
-        priority=None, tests=[]):
+    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[]):
         """ Create a new submission from tar source
 
-        :param problem_code: problem code
-        :type problem_code: string
+        :param problem_id: problem id (or code)
+        :type problem_id: integer
         :param tar_source: tar(tar.gz) source
         :type tar_source: string
         :param compiler_id: compiler id
         :type compiler_id: integer
-        :param private: private (default False)
-        :type private: bool
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type priority: integer
         :param tests: tests to run (default [])
@@ -726,20 +719,17 @@ class ProblemsApiV4Submissions(AbstractApi):
         :raises SphereEngineException
         """
         
-        return self.__create(problem_code, tar_source, compiler_id, private, priority, {}, tests)
+        return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests)
         
-    def __create(self, problem_code, source, compiler_id=None, private=False,
-               priority=None, files={}, tests=[]):
+    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[]):
         """ Create a new submission
 
-        :param problem_code: problem code
-        :type problem_code: string
+        :param problem_id: problem id (or code)
+        :type problem_id: integer
         :param source: submission source code
         :type source: string
         :param compiler_id: compiler id
         :type compiler_id: integer
-        :param private: private (default False)
-        :type private: bool
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type priority: integer
         :param files: files (default {})
@@ -755,10 +745,9 @@ class ProblemsApiV4Submissions(AbstractApi):
         method = 'POST'
 
         post_params = {
-            'problemCode': problem_code,
+            'problemId': problem_id,
             'compilerId': compiler_id,
-            'source': source,
-            'private': bool(private)
+            'source': source
         }
         files_params = {}
 
@@ -769,7 +758,7 @@ class ProblemsApiV4Submissions(AbstractApi):
             for k, v in files.items():
                 if not isinstance(v, six.string_types):
                     continue
-                files_params['files['+k+']'] = v;
+                files_params['files['+k+']'] = v
             post_params['source'] = ''
 
         if len(tests):
@@ -778,17 +767,15 @@ class ProblemsApiV4Submissions(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params, files_params)
 
         if 'id' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
     
-    def update(self, _id, private=None):
+    def update(self, _id):
         """ Update an existing submission
 
         :param _id: submission id
         :type _id: integer
-        :param private: private (default None)
-        :type private: string
         :returns: void
         :rtype: json
         :raises SphereEngineException
@@ -802,13 +789,11 @@ class ProblemsApiV4Submissions(AbstractApi):
         method = 'PUT'
 
         post_params = {}
-        if private != None:
-            post_params['private'] = private
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
         if not isinstance(response, dict) or response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 

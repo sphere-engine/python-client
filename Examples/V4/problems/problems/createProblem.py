@@ -11,8 +11,7 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-code = 'EXAMPLE'
 name = 'Example problem'
 
-response = client.problems.create(code, name)
+response = client.problems.create(name)
 # response['id'] stores the ID of the created problem

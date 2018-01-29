@@ -26,7 +26,7 @@ class TestProblems(unittest.TestCase):
         self.client = ProblemsClientV4('access-token', 'endpoint')
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_autorization_fail(self, mock_get):
+    def test_authorization_fail(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/unauthorizedAccess')
 
         try:
@@ -36,7 +36,7 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(401, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_autorization_success(self, mock_get):
+    def test_authorization_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/test')
 
         self.client.test()
@@ -62,8 +62,9 @@ class TestProblems(unittest.TestCase):
         self.assertEqual(10, problems['paging']['limit'])
         self.assertEqual(0, problems['paging']['offset'])
         self.assertNotIn('shortBody', problems['items'][0])
-        self.assertIn('lastModifiedBody', problems['items'][0])
-        self.assertIn('lastModifiedSettings', problems['items'][0])
+        self.assertIn('lastModified', problems['items'][0])
+        self.assertIn('body', problems['items'][0]['lastModified'])
+        self.assertIn('settings', problems['items'][0]['lastModified'])
 
         mock_get.return_value = get_mock_data('problems/getProblems/limit')
         self.assertEqual(11, self.client.problems.all(11)['paging']['limit'])
@@ -80,9 +81,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.all()
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_method_success(self, mock_get):
@@ -91,8 +92,9 @@ class TestProblems(unittest.TestCase):
         problem = self.client.problems.get('TEST')
         self.assertEqual('TEST', problem['code'])
         self.assertNotIn('shortBody', problem)
-        self.assertIn('lastModifiedBody', problem)
-        self.assertIn('lastModifiedSettings', problem)
+        self.assertIn('lastModified', problem)
+        self.assertIn('body', problem['lastModified'])
+        self.assertIn('settings', problem['lastModified'])
 
         self.assertNotIn('shortBody', self.client.problems.get('TEST', False))
 
@@ -115,9 +117,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.get('CODE')
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_problem_method_success(self, mock_get):
@@ -125,21 +127,21 @@ class TestProblems(unittest.TestCase):
 
         problem_code = 'CODE'
         self.assertEqual(problem_code, self.client.problems.create(
-            problem_code, 'name', 'body', 'maximize', True, 1000)['code'],
+            'name', 100, 'body', 2, True, code=problem_code)['code'],
                          'Creation method should return new problem code')
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_problem_method_code_taken(self, mock_get):
         mock_get.return_value = get_mock_data('exceptions/problemCodeTaken')
         try:
-            self.client.problems.create('TEST', 'Taken problem code')
+            self.client.problems.create('Taken problem code', None, code='TEST')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
 
     def test_create_problem_method_code_empty(self):
         try:
-            self.client.problems.create('', 'Empty problem code')
+            self.client.problems.create('Empty problem code', None, code='')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
@@ -149,14 +151,14 @@ class TestProblems(unittest.TestCase):
         mock_get.return_value = get_mock_data('exceptions/problemCodeInvalid')
 
         try:
-            self.client.problems.create('!@#$%^', 'Invalid problem code')
+            self.client.problems.create('Invalid problem code', None, code='!@#$%^')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
 
     def test_create_problem_method_empty_name(self):
         try:
-            self.client.problems.create('UNIQUE_CODE', '')
+            self.client.problems.create('', None, code='UNIQUE_CODE')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
@@ -167,8 +169,8 @@ class TestProblems(unittest.TestCase):
 
         nonexisting_masterjudge = 9999
         try:
-            self.client.problems.create('UNIQUE_CODE', 'Nonempty name', 'body',
-                                        'binary', False, nonexisting_masterjudge)
+            self.client.problems.create('Nonempty name', nonexisting_masterjudge, 'body',
+                                        0, False, code='UNIQUE_CODE')
             self.fail("Sphere Engine Exception with 404 code expected")
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
@@ -178,17 +180,17 @@ class TestProblems(unittest.TestCase):
         mock_get.return_value = get_mock_data('problems/createProblem/invalid')
 
         try:
-            self.client.problems.create('CODE', 'name', 'body', 'binary', False, 1000)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.client.problems.create('name', 1000, 'body', 0, False, code='CODE')
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/updateProblem/success')
 
         problem_code = 'CODE'
-        self.client.problems.update(problem_code, 'name', 'body', 'maximize', True, 1000)
+        self.client.problems.update(problem_code, 'name', 1000, 'body', 2, True)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_method_nonexisting_problem(self, mock_get):
@@ -206,8 +208,8 @@ class TestProblems(unittest.TestCase):
 
         nonexisting_masterjudge = 9999
         try:
-            self.client.problems.update('TEST', 'Nonempty name', 'body',
-                                        'binary', 0, nonexisting_masterjudge)
+            self.client.problems.update('TEST', 'Nonempty name', nonexisting_masterjudge, 'body',
+                                        0, 0)
             self.fail("Sphere Engine Exception with 404 code expected")
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
@@ -232,9 +234,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.update('CODE', 'name')
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_active_testcases_method_success(self, mock_get):
@@ -265,9 +267,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.allTestcases('TEST')
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_testcase_method_success(self, mock_get):
@@ -300,9 +302,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.getTestcase('TEST', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_problem_testcase_method_success(self, mock_get):
@@ -338,9 +340,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.createTestcase('TEST', '422', '422', 10, 1, 1)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_problem_testcase_method_success(self, mock_get):
@@ -386,9 +388,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.updateTestcase('TEST', 0, '422', '422', 10, 1, 1)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_delete_problem_testcase_method_success(self, mock_get):
@@ -422,9 +424,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.deleteTestcase('TEST', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_problem_testcase_file_method_success(self, mock_get):
@@ -480,9 +482,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.judges.all()
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_judge_method_success(self, mock_get):
@@ -507,9 +509,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.judges.get(422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_judge_file_method_success(self, mock_get):
@@ -540,13 +542,13 @@ class TestProblems(unittest.TestCase):
     def test_create_judge_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/createJudge/success')
 
-        response = self.client.judges.create('source', 1, 'testcase', 'UT judge')
+        response = self.client.judges.create('source', 1, 0, 'UT judge')
         judge_id = response['id']
         self.assertTrue(judge_id > 0, 'Creation method should return new judge ID')
 
     def test_create_judge_method_empty_source(self):
         try:
-            self.client.judges.create('', 1, 'testcase', '')
+            self.client.judges.create('', 1, 0, '')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
@@ -557,7 +559,7 @@ class TestProblems(unittest.TestCase):
 
         nonexisting_compiler = 9999
         try:
-            self.client.judges.create('nonempty source', nonexisting_compiler, 'testcase', '')
+            self.client.judges.create('nonempty source', nonexisting_compiler, 0, '')
             self.fail("Sphere Engine Exception with 404 code expected")
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
@@ -567,10 +569,10 @@ class TestProblems(unittest.TestCase):
         mock_get.return_value = get_mock_data('problems/createJudge/invalid')
 
         try:
-            self.client.judges.create('nonempty source', 422, 'testcase', '')
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.client.judges.create('nonempty source', 422, 0, '')
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_judge_method_success(self, mock_get):
@@ -623,9 +625,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.judges.update(422, 'nonempty source', 422, '')
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_method_success(self, mock_get):
@@ -650,9 +652,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.submissions.get(422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_file_method_success(self, mock_get):
@@ -660,16 +662,16 @@ class TestProblems(unittest.TestCase):
         self.assertEqual('source0', self.client.submissions.getSubmissionFile(1, 'source'))
         
         mock_get.return_value = get_mock_data('problems/getSubmissionFile/stdout')
-        self.assertEqual('stdout0', self.client.submissions.getSubmissionFile(1, 'stdout'))
+        self.assertEqual('stdout0', self.client.submissions.getSubmissionFile(1, 'output'))
         
         mock_get.return_value = get_mock_data('problems/getSubmissionFile/stderr')
-        self.assertEqual('stderr0', self.client.submissions.getSubmissionFile(1, 'stderr'))
+        self.assertEqual('stderr0', self.client.submissions.getSubmissionFile(1, 'error'))
         
         mock_get.return_value = get_mock_data('problems/getSubmissionFile/cmperr')
-        self.assertEqual('cmperr0', self.client.submissions.getSubmissionFile(1, 'cmperr'))
+        self.assertEqual('cmperr0', self.client.submissions.getSubmissionFile(1, 'cmpinfo'))
         
         mock_get.return_value = get_mock_data('problems/getSubmissionFile/psinfo')
-        self.assertEqual('psinfo0', self.client.submissions.getSubmissionFile(1, 'psinfo'))
+        self.assertEqual('psinfo0', self.client.submissions.getSubmissionFile(1, 'debug'))
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_file_method_nonexisting_submission(self, mock_get):
@@ -734,9 +736,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.submissions.getMulti([422])
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_method_success(self, mock_get):
@@ -773,9 +775,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.submissions.create('TEST', 'nonempty source', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_multi_files_method_success(self, mock_get):
@@ -816,9 +818,9 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.submissions.createMultiFiles('TEST', {'nonempty source': ''}, 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_with_tar_source_method_success(self, mock_get):
@@ -855,22 +857,6 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.submissions.createWithTarSource('TEST', 'nonempty source', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
-    
-    @patch('sphere_engine.ApiClient.make_http_call')
-    def test_update_submission_method_success(self, mock_get):
-        mock_get.return_value = get_mock_data('problems/updateSubmission/success')
-        
-        response = self.client.submissions.update(1, True)
-        
-    @patch('sphere_engine.ApiClient.make_http_call')
-    def test_update_submission_method_invalid_response(self, mock_get):
-        mock_get.return_value = get_mock_data('problems/updateSubmission/invalid')
-    
-        try:
-            self.client.submissions.update(1, True)
-            self.fail("Sphere Engine Exception with 422 code expected")
-        except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)

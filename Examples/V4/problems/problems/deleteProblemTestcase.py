@@ -11,7 +11,7 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'EXAMPLE'
+problemId = 42
 testcaseNumber = 0
 
-response = client.problems.deleteTestcase(problemCode, testcaseNumber)
+response = client.problems.deleteTestcase(problemId, testcaseNumber)

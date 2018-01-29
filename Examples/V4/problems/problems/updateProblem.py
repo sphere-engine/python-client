@@ -13,4 +13,4 @@ client = ProblemsClientV4(accessToken, endpoint)
 # API usage
 newProblemName = 'New example problem name'
 
-response = client.problems.update('EXAMPLE', newProblemName)
+response = client.problems.update(42, newProblemName)

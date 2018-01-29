@@ -12,12 +12,12 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 source = '<source code>'
-nonexistingCompiler = 99999;
+nonexistingCompiler = 99999
 
 try:
-    response = client.submissions.create(problemCode, source, nonexistingCompiler)
+    response = client.submissions.create(problemId, source, nonexistingCompiler)
     # response['id'] stores the ID of the created submission
 except SphereEngineException as e:
     if e.code == 401:

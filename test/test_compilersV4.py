@@ -36,7 +36,7 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(401, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_autorization_success(self, mock_get):
+    def test_authorization_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/test')
 
         self.client.test()
@@ -91,9 +91,9 @@ class TestCompilers(unittest.TestCase):
 
         try:
             self.client.submissions.get(123)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submissions_method_success(self, mock_get):
@@ -139,9 +139,9 @@ class TestCompilers(unittest.TestCase):
 
         try:
             self.client.submissions.getMulti([123])
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_stream_method_success(self, mock_get):
@@ -150,19 +150,19 @@ class TestCompilers(unittest.TestCase):
         self.assertEqual('source2', ret, 'Submission source')
 
         mock_get.return_value = get_mock_data('compilers/getSubmissionStream/stdin')
-        ret = self.client.submissions.getStream(2, 'stdin')
+        ret = self.client.submissions.getStream(2, 'input')
         self.assertEqual('stdin2', ret, 'Submission stdin')
 
         mock_get.return_value = get_mock_data('compilers/getSubmissionStream/stdout')
-        ret = self.client.submissions.getStream(2, 'stdout')
+        ret = self.client.submissions.getStream(2, 'output')
         self.assertEqual('stdout2', ret, 'Submission stdout')
 
         mock_get.return_value = get_mock_data('compilers/getSubmissionStream/stderr')
-        ret = self.client.submissions.getStream(2, 'stderr')
+        ret = self.client.submissions.getStream(2, 'error')
         self.assertEqual('stderr2', ret, 'Submission stderr')
 
         mock_get.return_value = get_mock_data('compilers/getSubmissionStream/cmperr')
-        ret = self.client.submissions.getStream(2, 'cmperr')
+        ret = self.client.submissions.getStream(2, 'cmpinfo')
         self.assertEqual('cmperr2', ret, 'Submission cmperr')
 
     @patch('sphere_engine.ApiClient.make_http_call')
@@ -214,9 +214,9 @@ class TestCompilers(unittest.TestCase):
 
         try:
             self.client.submissions.create('unit_test', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_multi_files_method_success(self, mock_get):
@@ -251,9 +251,9 @@ class TestCompilers(unittest.TestCase):
 
         try:
             self.client.submissions.createMultiFiles({'unit_test': ''}, 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
             
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_with_tar_source_method_success(self, mock_get):
@@ -286,7 +286,7 @@ class TestCompilers(unittest.TestCase):
 
         try:
             self.client.submissions.createWithTarSource('unit_test', 422)
-            self.fail("Sphere Engine Exception with 422 code expected")
+            self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
-            self.assertEqual(422, e.code)
+            self.assertEqual(400, e.code)
             

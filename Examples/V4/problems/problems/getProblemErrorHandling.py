@@ -12,10 +12,10 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 
 try:
-    response = client.problems.get(problemCode)
+    response = client.problems.get(problemId)
 except SphereEngineException as e:
     if e.code == 401:
         print('Invalid access token')

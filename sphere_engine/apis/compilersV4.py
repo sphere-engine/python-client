@@ -119,7 +119,7 @@ class CompilersApiV4Submissions(AbstractApi):
             post_params=post_params, files_params=files_params)
 
         if 'id' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -142,7 +142,7 @@ class CompilersApiV4Submissions(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {'id': _id})
 
         if 'result' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -174,7 +174,7 @@ class CompilersApiV4Submissions(AbstractApi):
         response = self.api_client.call_api(resource_path, method, {}, params)
 
         if 'items' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -183,7 +183,7 @@ class CompilersApiV4Submissions(AbstractApi):
 
         :param _id: submission id
         :type _id: integer
-        :param stream: name of the stream, source|stdin|stdout|stderr|cmperr
+        :param stream: name of the stream, source|input|output|error|cmpinfo
         :type stream: string
         :returns: submission details
         :rtype: json
@@ -193,7 +193,7 @@ class CompilersApiV4Submissions(AbstractApi):
         if not _id:
             raise SphereEngineException('empty _id value', 400)
 
-        if stream not in ["source", "stdin", "stdout", "stderr", "cmperr"]:
+        if stream not in ["source", "input", "output", "error", "cmpinfo"]:
             raise SphereEngineException('stream doesn\'t exist', 404)
 
         resource_path = '/submissions/{id}/{stream}'
@@ -238,7 +238,7 @@ class CompilersApiV4(AbstractApi):
         response = self.api_client.call_api(resource_path, method, )
 
         if 'message' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response
 
@@ -256,6 +256,6 @@ class CompilersApiV4(AbstractApi):
         response = self.api_client.call_api(resource_path, method)
 
         if 'items' not in response:
-            raise SphereEngineException('invalid or empty response', 422)
+            raise SphereEngineException('unexpected error', 400)
 
         return response

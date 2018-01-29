@@ -13,4 +13,4 @@ client = ProblemsClientV4(accessToken, endpoint)
 # API usage
 activeTestcases = [1,2,3]
 
-response = client.problems.updateActiveTestcases('EXAMPLE', activeTestcases)
+response = client.problems.updateActiveTestcases(42, activeTestcases)

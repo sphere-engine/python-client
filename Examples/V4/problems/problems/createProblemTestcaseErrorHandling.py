@@ -12,14 +12,14 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-code = 'EXAMPLE'
+id = 42
 input = 'model input'
 output = 'model output'
 time_limit = 5
 judgeId = 1
 
 try:
-    response = client.problems.createTestcase(code, input, output, time_limit, judgeId)
+    response = client.problems.createTestcase(id, input, output, time_limit, judgeId)
     # response['number'] stores the number of created testcase
 except SphereEngineException as e:
     if e.code == 401:

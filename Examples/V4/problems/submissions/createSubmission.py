@@ -11,9 +11,9 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 source = '<source code>'
 compiler = 11 # C language
 
-response = client.submissions.create(problemCode, source, compiler)
+response = client.submissions.create(problemId, source, compiler)
 # response['id'] stores the ID of the created submission

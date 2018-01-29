@@ -11,8 +11,8 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 testcaseNumber = 0
 file = 'input'
 
-response = client.problems.getTestcaseFile(problemCode, testcaseNumber, file)
+response = client.problems.getTestcaseFile(problemId, testcaseNumber, file)

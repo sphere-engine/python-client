@@ -12,11 +12,11 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'EXAMPLE'
+problemId = 42
 testcaseNumber = 0
 
 try:
-    response = client.problems.deleteTestcase(problemCode, testcaseNumber)
+    response = client.problems.deleteTestcase(problemId, testcaseNumber)
 except SphereEngineException as e:
     if e.code == 401:
         print('Invalid access token')

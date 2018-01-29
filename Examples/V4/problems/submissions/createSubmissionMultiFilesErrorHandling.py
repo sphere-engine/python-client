@@ -12,7 +12,7 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 files = {
     'prog.c': '<source_code>',
     'prog.h': '<source_code>'
@@ -20,7 +20,7 @@ files = {
 compiler = 11 # C language
 
 try:
-    response = client.submissions.createMultiFiles(problemCode, files, compiler)
+    response = client.submissions.createMultiFiles(problemId, files, compiler)
     # response['id'] stores the ID of the created submission
 except SphereEngineException as e:
     if e.code == 401:

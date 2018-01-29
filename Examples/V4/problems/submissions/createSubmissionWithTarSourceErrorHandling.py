@@ -12,12 +12,12 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-problemCode = 'TEST'
+problemId = 42
 tarSource = '<tar_source>'
 compiler = 11 # C language
 
 try:
-    response = client.submissions.createWithTarSource(problemCode, tarSource, compiler)
+    response = client.submissions.createWithTarSource(problemId, tarSource, compiler)
     # response['id'] stores the ID of the created submission
 except SphereEngineException as e:
     if e.code == 401:

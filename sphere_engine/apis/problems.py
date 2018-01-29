@@ -189,9 +189,6 @@ class ProblemsApiProblems(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
 
-        if response is not True:
-            raise SphereEngineException('invalid or empty response', 422)
-
         return response
 
     def updateActiveTestcases(self, code, active_testcases):
@@ -361,9 +358,6 @@ class ProblemsApiProblems(AbstractApi):
             post_params['active'] = active
 
         response = self.api_client.call_api(resource_path, method, path_params, {}, {}, post_params)
-
-        if response is not True:
-            raise SphereEngineException('invalid or empty response', 422)
 
         return response
 
@@ -568,9 +562,6 @@ class ProblemsApiJudges(AbstractApi):
             post_params['name'] = name
 
         response = self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
-
-        if response is not True:
-            raise SphereEngineException('invalid or empty response', 422)
 
         return response
 

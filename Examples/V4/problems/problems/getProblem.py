@@ -11,4 +11,4 @@ endpoint = '<endpoint>'
 client = ProblemsClientV4(accessToken, endpoint)
 
 # API usage
-response = client.problems.get('TEST')
+response = client.problems.get(42)
