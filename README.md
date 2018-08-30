@@ -32,13 +32,13 @@ import sphere_engine
 ./test.sh
 ```
 
-## Documentation
+## Examples
 
 Usage:
 
 ```python
-from sphere_engine import CompilersClientV3
-client = CompilersClientV3('<token>', '<endpoint>')
+from sphere_engine import CompilersClientV4
+client = CompilersClientV4('<token>', '<endpoint>')
 r = client.submissions.create('<source_code>', compilerId, '<input>')
 print client.submissions.get(r['id'])
 
