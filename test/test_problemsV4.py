@@ -565,6 +565,17 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_judge_method_nonexisting_compiler_version(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompilerVersion')
+
+        nonexisting_compiler_version = 9999
+        try:
+            self.client.judges.create('nonempty source', 1, 0, '', compiler_version_id=nonexisting_compiler_version)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_judge_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/createJudge/invalid')
 
@@ -608,6 +619,17 @@ class TestProblems(unittest.TestCase):
             self.fail("Sphere Engine Exception with 404 code expected")
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_update_judge_method_nonexisting_compiler_version(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompilerVersion')
+
+        nonexisting_compiler_version = 9999
+        try:
+            self.client.judges.update(1, 'nonempty source', 1, '', compiler_version_id=nonexisting_compiler_version)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_update_judge_method_foreign_judge(self, mock_get):
@@ -770,6 +792,17 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_method_nonexisting_compiler_version(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompilerVersion')
+
+        nonexisting_compiler_version = 9999
+        try:
+            self.client.submissions.create('TEST', 'nonempty source', 1, compiler_version_id=nonexisting_compiler_version)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
 
@@ -813,6 +846,17 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(404, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_multi_files_method_nonexisting_compiler_version(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompilerVersion')
+
+        nonexisting_compiler_version = 9999
+        try:
+            self.client.submissions.createMultiFiles('TEST', {'nonempty source': ''}, 1, compiler_version_id=nonexisting_compiler_version)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_multi_files_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
 
@@ -850,6 +894,17 @@ class TestProblems(unittest.TestCase):
             self.fail("Sphere Engine Exception with 404 code expected")
         except SphereEngineException as e:
             self.assertEqual(404, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_with_tar_source_method_nonexisting_compiler_version(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonexistingCompilerVersion')
+
+        nonexisting_compiler_version = 9999
+        try:
+            self.client.submissions.createWithTarSource('TEST', 'nonempty source', 1, compiler_version_id=nonexisting_compiler_version)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_with_tar_source_method_invalid_response(self, mock_get):

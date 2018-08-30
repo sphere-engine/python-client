@@ -435,7 +435,7 @@ class ProblemsApiV4Judges(AbstractApi):
 
         return response
 
-    def create(self, source_code, compiler_id=1, type_id=0, name='', shared=False):
+    def create(self, source_code, compiler_id=1, type_id=0, name='', shared=False, compiler_version_id=None):
         """ Create a new judge
 
         :param source_code: judge source code
@@ -448,6 +448,8 @@ class ProblemsApiV4Judges(AbstractApi):
         :type name: string
         :param shared: shared (default False)
         :type shared: bool
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: id of created judge
         :rtype: json
         :raises SphereEngineException
@@ -466,6 +468,9 @@ class ProblemsApiV4Judges(AbstractApi):
             'name': name,
             'shared': shared
         }
+
+        if compiler_version_id != None:
+            post_params['compilerVersionId'] = compiler_version_id
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
@@ -498,7 +503,7 @@ class ProblemsApiV4Judges(AbstractApi):
 
         return response
 
-    def update(self, _id, source_code=None, compiler_id=None, name=None, shared=None):
+    def update(self, _id, source_code=None, compiler_id=None, name=None, shared=None, compiler_version_id=None):
         """ Update judge
 
         :param _id: judge id
@@ -511,6 +516,8 @@ class ProblemsApiV4Judges(AbstractApi):
         :type name: string
         :param shared: shared (default False)
         :type shared: bool
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: void
         :rtype: json
         :raises SphereEngineException
@@ -535,6 +542,9 @@ class ProblemsApiV4Judges(AbstractApi):
             post_params['name'] = name
         if shared != None:
             post_params['shared'] = shared
+
+        if compiler_version_id != None:
+            post_params['compilerVersionId'] = compiler_version_id
 
         response = self.api_client.call_api(resource_path, method, host_params, {}, {}, post_params)
 
@@ -661,7 +671,7 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         return response
     
-    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[]):
+    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -674,14 +684,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type priority: integer
         :param tests: tests to run (default [])
         :type tests: list
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, source, compiler_id, priority, {}, tests)
+        return self.__create(problem_id, source, compiler_id, priority, {}, tests, compiler_version_id)
         
-    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[]):
+    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
         """ Create a new submission with multi files
 
         :param problem_id: problem id (or code)
@@ -694,14 +706,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type priority: integer
         :param tests: tests to run (default [])
         :type tests: list
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, '', compiler_id, priority, files, tests)
+        return self.__create(problem_id, '', compiler_id, priority, files, tests, compiler_version_id)
 
-    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[]):
+    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
         """ Create a new submission from tar source
 
         :param problem_id: problem id (or code)
@@ -714,14 +728,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type priority: integer
         :param tests: tests to run (default [])
         :type tests: list
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests)
+        return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests, compiler_version_id)
         
-    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[]):
+    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[], compiler_version_id=None):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -736,6 +752,8 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: dict
         :param tests: tests to run (default [])
         :type tests: list
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type compiler_version_id: integer
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
@@ -762,7 +780,10 @@ class ProblemsApiV4Submissions(AbstractApi):
             post_params['source'] = ''
 
         if len(tests):
-            post_params['tests'] = ','.join(tests);    
+            post_params['tests'] = ','.join(tests);
+
+        if compiler_version_id != None:
+            post_params['compilerVersionId'] = compiler_version_id
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params, files_params)
 

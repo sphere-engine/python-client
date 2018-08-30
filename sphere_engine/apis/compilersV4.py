@@ -15,7 +15,7 @@ class CompilersApiV4Submissions(AbstractApi):
     Sphere Engine Problems module for submissions
     """
 
-    def create(self, source='', compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None):
+    def create(self, source='', compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None, compiler_version_id=None):
         """ Create submission
 
         :param source: source code (default '')
@@ -26,14 +26,20 @@ class CompilersApiV4Submissions(AbstractApi):
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param time_limit: time limit (default 5)
+        :type integer
+        :param memory_limit: memory limit (default: no limit)
+        :type integer
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type integer
         :returns: submission id
         :rtype: json
         :raises SphereEngineException
         """
 
-        return self.__create(source, compiler_id, _input, priority, {}, time_limit, memory_limit)
+        return self.__create(source, compiler_id, _input, priority, {}, time_limit, memory_limit, compiler_version_id)
 
-    def createMultiFiles(self, files={}, compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None):
+    def createMultiFiles(self, files={}, compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None, compiler_version_id=None):
         """ Create submission with multi files
 
         :param files: files {fileName: fileContent} (default {})
@@ -44,14 +50,20 @@ class CompilersApiV4Submissions(AbstractApi):
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param time_limit: time limit (default 5)
+        :type integer
+        :param memory_limit: memory limit (default: no limit)
+        :type integer
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type integer
         :returns: submission id
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create('', compiler_id, _input, priority, files, time_limit, memory_limit)
+        return self.__create('', compiler_id, _input, priority, files, time_limit, memory_limit, compiler_version_id)
 
-    def createWithTarSource(self, tar_source='', compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None):
+    def createWithTarSource(self, tar_source='', compiler_id=1, _input='', priority=None, time_limit=None, memory_limit=None, compiler_version_id=None):
         """ Create submission from tar source
 
         :param tar_source: tar source (default '')
@@ -62,14 +74,20 @@ class CompilersApiV4Submissions(AbstractApi):
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param time_limit: time limit (default 5)
+        :type integer
+        :param memory_limit: memory limit (default: no limit)
+        :type integer
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type integer
         :returns: submission id
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(tar_source, compiler_id, _input, priority, {}, time_limit, memory_limit)
+        return self.__create(tar_source, compiler_id, _input, priority, {}, time_limit, memory_limit, compiler_version_id)
         
-    def __create(self, source='', compiler_id=1, _input='', priority=None, files={}, time_limit=None, memory_limit=None):
+    def __create(self, source='', compiler_id=1, _input='', priority=None, files={}, time_limit=None, memory_limit=None, compiler_version_id=None):
         """ Create submission
 
         :param source: source code (default '')
@@ -80,6 +98,12 @@ class CompilersApiV4Submissions(AbstractApi):
         :type : string
         :param priority: priority of the submission (default normal priority, eg. 5 for range 1-9)
         :type : integer
+        :param time_limit: time limit (default 5)
+        :type integer
+        :param memory_limit: memory limit (default: no limit)
+        :type integer
+        :param compiler_version_id: id of the compiler version (default: default for api v4)
+        :type integer
         :returns: submission id
         :rtype: json
         :raises SphereEngineException
@@ -114,6 +138,9 @@ class CompilersApiV4Submissions(AbstractApi):
             
         if memory_limit != None:
             post_params['memoryLimit'] = memory_limit
+
+        if compiler_version_id != None:
+            post_params['compilerVersionId'] = compiler_version_id
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {},
             post_params=post_params, files_params=files_params)
