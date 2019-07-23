@@ -1,5 +1,5 @@
 ## Requirements.
-Python 2.7, 3.4 or 3.5 [![Build Status](https://travis-ci.org/sphere-engine/python-client.svg?branch=master)](https://travis-ci.org/sphere-engine/python-client)
+Python 2.7, 3.4+ [![Build Status](https://travis-ci.org/sphere-engine/python-client.svg?branch=master)](https://travis-ci.org/sphere-engine/python-client)
 
 ## Sphere Engine SDK
 
