@@ -183,6 +183,30 @@ class ProblemsApiV4Problems(AbstractApi):
 
         return response
 
+    def delete(self, id):
+        """ Delete the problem
+
+        :param id: problem id
+        :type id: integer
+        :returns: void
+        :rtype: json
+        :raises SphereEngineException
+        """
+
+        resource_path = '/problems/{id}'
+        method = 'DELETE'
+
+        path_params = {
+            'id': id
+        }
+
+        response = self.api_client.call_api(resource_path, method, path_params)
+
+        if not isinstance(response, dict) or response:
+            raise SphereEngineException('unexpected error', 400)
+
+        return response
+
     def updateActiveTestcases(self, _id, active_testcases):
         """ Update active testcases related to the problem
 
