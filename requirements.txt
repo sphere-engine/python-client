@@ -5,3 +5,4 @@ certifi
 python-dateutil
 simplejson
 coverage
+mock
