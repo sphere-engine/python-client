@@ -36,7 +36,29 @@ class TestCompilers(unittest.TestCase):
             self.assertEqual(401, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
-    def test_autorization_success(self, mock_get):
+    def test_not_json_response_fail(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/nonJsonResponse')
+
+        try:
+            self.client.test()
+            self.fail("Sphere Engine Exception with 500 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(500, e.code)
+            self.assertEqual('fatal error', str(e))
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_invalid_json_response_fail(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/invalidJsonResponse')
+
+        try:
+            self.client.test()
+            self.fail("Sphere Engine Exception with 502 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(502, e.code)
+            self.assertEqual("{'msg': 'fatal error'}", str(e))
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_authorization_success(self, mock_get):
         mock_get.return_value = get_mock_data('compilers/test')
 
         self.client.test()

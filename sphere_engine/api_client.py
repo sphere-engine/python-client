@@ -130,18 +130,21 @@ class ApiClient(object):
         try:
             if http_response['http_code'] not in range(200, 206):
                 http_body = http_response['http_body'].json()
-                message = http_body['message']
-                error_code = http_body['error_code'] if 'error_code' in http_body else 0
-                #raise SphereEngineException(r.reason, r.status_code)
-                raise sphere_engine.exceptions.SphereEngineException(message,
-                                                                     http_response['http_code'],
-                                                                     error_code)
+                if 'message' in http_body:
+                    message = http_body['message']
+                    error_code = http_body['error_code'] if 'error_code' in http_body else 0
+                    raise sphere_engine.exceptions.SphereEngineException(message, http_response['http_code'], error_code)
+                else:
+                    message = http_response['http_body'].text
+                    raise sphere_engine.exceptions.SphereEngineException(message, http_response['http_code'], 0)
+
             if response_type == 'file':
                 data = http_response['http_body'].text
             else:
                 data = http_response['http_body'].json()
-        except simplejson.scanner.JSONDecodeError as e:
-            raise sphere_engine.exceptions.SphereEngineException(e)
+        except simplejson.scanner.JSONDecodeError:
+            message = http_response['http_body'].text
+            raise sphere_engine.exceptions.SphereEngineException(message, http_response['http_code'], 0)
 
         return data
 
