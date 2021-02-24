@@ -40,7 +40,7 @@ Usage:
 from sphere_engine import CompilersClientV4
 client = CompilersClientV4('<token>', '<endpoint>')
 r = client.submissions.create('<source_code>', compilerId, '<input>')
-print client.submissions.get(r['id'])
+print(client.submissions.get(r['id']))
 
 (...)
 ```

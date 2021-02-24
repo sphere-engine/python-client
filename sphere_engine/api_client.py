@@ -8,8 +8,10 @@ Sphere Engine API
 
 from __future__ import absolute_import
 
-import sys
 import re
+import sys
+import time
+import json
 from datetime import datetime
 from datetime import date
 # python 2 and python 3 compatibility library
@@ -23,6 +25,10 @@ try:
 except ImportError:
     # for python2
     from urllib import quote
+
+import logging
+logger = logging.getLogger('sphere_engine')
+
 
 class ApiClient(object):
     """
@@ -41,7 +47,7 @@ class ApiClient(object):
 
     default_headers = {}
 
-    def __init__(self, access_token, endpoint, version, api_type):
+    def __init__(self, access_token, endpoint, version, api_type, request_timeout=5, retry_count=3):
         """
         Constructor of the class.
 
@@ -54,6 +60,9 @@ class ApiClient(object):
         self.endpoint = endpoint
         self.version = version
         self.host = self.create_host(api_type, endpoint, version)
+
+        self._request_timeout = request_timeout
+        self._retry_count = retry_count
 
         # Set default User-Agent.
         self.user_agent = 'SphereEngine/ClientPython'
@@ -148,7 +157,6 @@ class ApiClient(object):
 
         return data
 
-
     def make_http_call(self, resource_path, method, path_params=None, query_params=None,
                        header_params=None, post_params=None, files_params=None):
         """ HTTP call method
@@ -200,12 +208,25 @@ class ApiClient(object):
         # request url
         url = self.host + resource_path
 
-        # perform request and return response
-        response_data = self.request(method, url,
-                                     query_params=query_params,
-                                     headers=header_params,
-                                     post_params=post_params,
-                                     files_params=files_params)
+        retry_count = self._retry_count
+        while retry_count > 0:
+            retry_count = retry_count - 1
+            try:
+
+                # perform request and return response
+                response_data = self.request(method, url,
+                                             query_params=query_params,
+                                             headers=header_params,
+                                             post_params=post_params,
+                                             files_params=files_params)
+
+                if 500 <= response_data.status_code < 600:
+                    time.sleep(3)
+                    continue
+
+                break
+            except Exception as e:
+                raise e
 
         return {
             'http_code': response_data.status_code,
@@ -226,19 +247,19 @@ class ApiClient(object):
         response = None
 
         if method == "GET":
-            response = requests.get(url, params=query_params, headers=headers)
+            response = requests.get(url, params=query_params, headers=headers, timeout=self._request_timeout)
 
         elif method == "HEAD":
-            response = requests.head(url, params=query_params, headers=headers)
+            response = requests.head(url, params=query_params, headers=headers, timeout=self._request_timeout)
 
         elif method == "POST":
-            response = requests.post(url, params=query_params, headers=headers, data=post_params, files=files_params)
+            response = requests.post(url, params=query_params, headers=headers, data=post_params, files=files_params, timeout=self._request_timeout)
 
         elif method == "PUT":
-            response = requests.put(url, params=query_params, headers=headers, data=post_params, files=files_params)
+            response = requests.put(url, params=query_params, headers=headers, data=post_params, files=files_params, timeout=self._request_timeout)
 
         elif method == "DELETE":
-            response = requests.delete(url, params=query_params, headers=headers)
+            response = requests.delete(url, params=query_params, headers=headers, timeout=self._request_timeout)
 
         else:
             raise ValueError(
