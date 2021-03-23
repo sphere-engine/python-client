@@ -240,7 +240,7 @@ class ProblemsApiV4Problems(AbstractApi):
 
         response = self.api_client.call_api(resource_path, method, path_params)
 
-        if 'testcases' not in response:
+        if 'items' not in response:
             raise SphereEngineException('unexpected error', 400)
 
         return response

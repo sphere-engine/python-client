@@ -271,7 +271,7 @@ class TestProblems(unittest.TestCase):
     def test_all_testcases_method_success(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getProblemTestcases/success')
 
-        self.assertEqual(0, self.client.problems.allTestcases('TEST')['testcases'][0]['number'])
+        self.assertEqual(0, self.client.problems.allTestcases('TEST')['items'][0]['number'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_all_testcases_method_nonexisting_problem(self, mock_get):
