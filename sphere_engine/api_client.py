@@ -238,10 +238,16 @@ class ApiClient(object):
                     continue
 
                 break
-            except requests.exceptions.ConnectionError:
-                continue
-            except requests.exceptions.Timeout:
-                continue
+            except requests.exceptions.ConnectionError as e:
+                if retry_count > 0:
+                    continue
+                else:
+                    raise e
+            except requests.exceptions.Timeout as e:
+                if retry_count > 0:
+                    continue
+                else:
+                    raise e
             except Exception as e:
                 raise e
 
