@@ -1,19 +1,21 @@
-import SphereEngineAPI as se
+from sphere_engine import CompilersClientV4
+from sphere_engine import ProblemsClientV4
 
-SC = se.SphereEngineAPI('<token>')
-SP = se.SphereEngineAPI('<token>')
 
-test =  'Sphere Compilers'
-test += '\n\ttest: ' + SC.compilers.test()[:50] + '...'
-test += '\n\tlanguages: ' + SC.compilers.languages()[:50] + '...'
-test += '\n\tgetSubmission: ' + SC.compilers.getSubmission(33880429)
-test += '\n\tsendSubmission: ' + SC.compilers.sendSubmission('int main() { return 0; }')
-test += '\n\nSphere Problems'
-test += '\n\ttest: ' + SP.problems.test()
-test += '\n\tlanguages: ' + SP.problems.languages()[:50] + '...'
-test += '\n\tgetSubmission: ' + SP.problems.getSubmission(962)[:50] + '...'
-test += '\n\tsendSubmission: ' + SP.problems.sendSubmission('SEDEMO4', 'int main() { return 0; }')
-test += '\n\tproblems: ' + SP.problems.problemsList()[:50] + '...'
-test += '\n\tgetProblem: ' + SP.problems.getProblem('SEDEMO4')[:50] + '...'
+# define access parameters
+accessTokenCompilers = '<access_token>'
+endpointCompilers = '<endpoint>'
+accessTokenProblems = '<access_token>'
+endpointProblems = '<endpoint>'
 
-print test
+# initialization
+clientCompilers = CompilersClientV4(accessTokenCompilers, endpointCompilers)
+clientProblems = ProblemsClientV4(accessTokenProblems, endpointProblems)
+
+# API usage
+response = clientCompilers.test()
+print(response)
+
+# API usage
+response = clientProblems.test()
+print(response)

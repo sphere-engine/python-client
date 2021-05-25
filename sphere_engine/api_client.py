@@ -157,6 +157,19 @@ class ApiClient(object):
 
         return data
 
+    def _backoff(self, remaining_retries):
+        """ Wait time between request in case of retry
+
+        :param remaining_retries: number of remaining retires
+        :type remaining_retries: int
+        """
+
+        retry_number = max(0, self._retry_count - remaining_retries)
+
+        if retry_number > 0:  # waits only for actual retries
+            sleep_time = min(3, retry_number)
+            time.sleep(sleep_time)
+
     def make_http_call(self, resource_path, method, path_params=None, query_params=None,
                        header_params=None, post_params=None, files_params=None):
         """ HTTP call method
@@ -210,6 +223,7 @@ class ApiClient(object):
 
         retry_count = self._retry_count
         while retry_count > 0:
+            self._backoff(retry_count)
             retry_count = retry_count - 1
             try:
 
@@ -221,10 +235,13 @@ class ApiClient(object):
                                              files_params=files_params)
 
                 if 500 <= response_data.status_code < 600:
-                    time.sleep(3)
                     continue
 
                 break
+            except requests.exceptions.ConnectionError:
+                continue
+            except requests.exceptions.Timeout:
+                continue
             except Exception as e:
                 raise e
 
