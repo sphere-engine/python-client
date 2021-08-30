@@ -995,8 +995,6 @@ class ProblemsApiV4Widgets(AbstractApi):
         for language in languages:
             post_params['languages[{}]'.format(language)] = language
 
-        print(post_params)
-        #return
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
 
         if 'hash' not in response:
