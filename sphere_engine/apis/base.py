@@ -6,6 +6,7 @@ Sphere Engine API
 @copyright  Copyright (c) 2015 Sphere Research Labs (http://sphere-research.com)
 """
 
+
 class AbstractApi(object):
     """
     Abstract API class

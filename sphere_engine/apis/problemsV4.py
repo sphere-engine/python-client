@@ -9,6 +9,7 @@ Sphere Engine API
 from sphere_engine.exceptions import SphereEngineException
 from .base import AbstractApi
 import six
+from datetime import datetime
 
 class ProblemsApiV4Problems(AbstractApi):
     """
@@ -842,6 +843,168 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         return response
 
+
+class ProblemsApiV4Widgets(AbstractApi):
+
+    def create(self, name, problem_id, default_language,
+               grade_mode=None, date_from=None, date_to=None, source_code_template='', max_submissions=None, session_duration=None,
+               show_ranking=True, show_user_data_on_ranking=False, show_welcome_form=False, secure_by_oauth=False,
+               display_test_cases_results=False, display_output=False, hide_submission_results=False,
+               default_tab='problem', languages=None):
+
+        """ Create a new widget
+
+        :param name: Widget name
+        :type name: string
+        :param problem_id: problem id
+        :type problem_id: integer
+        :param default_language: Default language selected in the widget
+        :type default_language: integer
+
+        :param grade_mode:
+        :type grade_mode: string
+        :param date_from: Period of time for submitting solutions (start). UTC
+        :type date_from: datetime.datetime
+        :param date_to: Period of time for submitting solutions (end). UTC
+        :type date_to: datetime.datetime
+        :param source_code_template: The source code that will be loaded to the editor by default.
+        :type source_code_template: string
+        :param max_submissions: Maximum number of submissions per user
+        :type max_submissions: integer
+        :param session_duration: The session duration in minutes. The user will have limited time to solve the problem.
+        :type session_duration: integer
+        :param show_ranking: make the ranking visible to the users
+        :type show_ranking: bool
+        :param show_user_data_on_ranking: display user data (i.e. name and/or login) publicly in the ranking
+        :type show_user_data_on_ranking: bool
+        :param show_welcome_form: show welcome form with *name* and *email* fields before allowing the user to enter the challenge
+        :type show_welcome_form: bool
+        :param secure_by_oauth: secure this widget by requiring the signature in the HTTP request
+        :type secure_by_oauth: bool
+        :param display_test_cases_results: enable the user to see the results for each test case individually
+        :type display_test_cases_results: bool
+        :param display_output: allow the user to view output data and error messages produced by the submission
+        :type display_output: bool
+        :param hide_submission_results: Hide all details of the submission execution, including the final result, score, execution time, memory usage.
+        :type hide_submission_results: bool
+        :param default_tab:
+        :type default_tab: string
+        :param languages: Languages enabled for this widget, eg. [1,2,3]
+        :type languages: list
+
+        :returns: id of created submission
+        :rtype: json
+        :raises SphereEngineException
+        :raises RuntimeError
+        :raises ValueError
+        """
+
+        # required parameters
+        if not isinstance(name, str):
+            raise ValueError('name should be str')
+        if not isinstance(problem_id, int):
+            raise ValueError('problem_id should be int')
+        if not isinstance(default_language, int):
+            raise ValueError('default_language should be int')
+
+        # additional parameters
+        if grade_mode is not None:
+            if grade_mode not in ['auto', 'manual']:
+                raise ValueError('Wrong value for grade_mode, use "auto" or "manual"')
+        else:
+            grade_mode = 'auto'
+
+        # YYYY-MM-DD HH:MM:SS UTC
+        if (date_from is not None) and not isinstance(date_from, datetime):
+            raise ValueError('date_time should be datetime.datetime object')
+        if (date_to is not None) and not isinstance(date_to, datetime):
+            raise ValueError('date_to should be datetime.datetime object')
+
+        if max_submissions is not None and not isinstance(max_submissions, int):
+            raise ValueError('max_submissions should be int')
+        if session_duration is not None and not isinstance(session_duration, int):
+            raise ValueError('session_duration should be int')
+
+        if default_tab not in ('problem', 'solve', 'history', 'ranking'):
+            raise ValueError('Wrong value for default_tab, use: "problem", "solve", "history" or "ranking"')
+
+        _dict = {'show_ranking': show_ranking,
+                 'show_user_data_on_ranking': show_user_data_on_ranking,
+                 'show_welcome_form': show_welcome_form,
+                 'secure_by_oauth': secure_by_oauth,
+                 'display_test_cases_results': display_test_cases_results,
+                 'display_output': display_output,
+                 'hide_submission_results': hide_submission_results
+                 }
+        for _key in _dict.keys():
+            if _dict[_key] is not None and not isinstance(_dict[_key], bool):
+                raise ValueError('{} should be bool'.format(_dict[_key]))
+
+        if languages is not None:
+            if not isinstance(languages, list):
+                raise ValueError('languages should be list')
+            if default_language not in languages:
+                raise RuntimeError('default_language not in languages')
+        else:
+            languages = []
+
+        return self.__create(name, problem_id, default_language, grade_mode, date_from, date_to, source_code_template,
+                             max_submissions, session_duration, show_ranking, show_user_data_on_ranking,
+                             show_welcome_form, secure_by_oauth, display_test_cases_results, display_output,
+                             hide_submission_results, default_tab, languages)
+
+    def __create(self, name, problem_id, default_language, grade_mode,
+            date_from, date_to, source_code_template, max_submissions, session_duration,
+            show_ranking, show_user_data_on_ranking, show_welcome_form, secure_by_oauth, display_test_cases_results, display_output,
+            hide_submission_results, default_tab, languages):
+
+        resource_path = '/widgets'
+        method = 'POST'
+
+        post_params = {
+            'name': name,
+            'problem_id': problem_id,
+            'default_language': default_language,
+            'grade_mode': grade_mode,
+            'source_code_template': source_code_template,
+            'default_tab': default_tab,
+        }
+        if max_submissions is not None:
+            post_params['max_submissions'] = max_submissions
+        if session_duration is not None:
+            post_params['session_duration'] = session_duration
+
+        if date_from is not None:
+            post_params['date_from'] = date_from.strftime('%Y-%m-%d %H:%M:%S UTC')
+            pass
+        if date_to is not None:
+            post_params['date_to'] = date_to.strftime('%Y-%m-%d %H:%M:%S UTC')
+
+        _dict = {'show_ranking': show_ranking,
+                 'show_user_data_on_ranking': show_user_data_on_ranking,
+                 'show_welcome_form': show_welcome_form,
+                 'secure_by_oauth': secure_by_oauth,
+                 'display_test_cases_results': display_test_cases_results,
+                 'display_output': display_output,
+                 'hide_submission_results': hide_submission_results
+                 }
+        for _key in _dict.keys():
+            if _dict[_key] is not None:
+                post_params[_key] = 1 if _dict[_key] is True else 0
+
+        for language in languages:
+            post_params['languages[{}]'.format(language)] = language
+
+        print(post_params)
+        #return
+        response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params)
+
+        if 'hash' not in response:
+            raise SphereEngineException('unexpected error', 400)
+
+        return response
+
+
 class ProblemsApiV4(AbstractApi):
     """
     Sphere Engine Problems module base class
@@ -865,6 +1028,12 @@ class ProblemsApiV4(AbstractApi):
         :return: ProblemsApiSubmissions """
         return self._submissions
 
+    @property
+    def widgets(self):
+        """
+        :return: ProblemsApiSubmissions """
+        return self._widgets
+
     def __init__(self, api_client):
         """
         @param api_client: sphere_engine.api_client.ApiClient
@@ -873,6 +1042,7 @@ class ProblemsApiV4(AbstractApi):
         self._problems = ProblemsApiV4Problems(api_client)
         self._judges = ProblemsApiV4Judges(api_client)
         self._submissions = ProblemsApiV4Submissions(api_client)
+        self._widgets = ProblemsApiV4Widgets(api_client)
 
     def test(self):
         """ Test API connection
