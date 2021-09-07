@@ -9,6 +9,7 @@ Sphere Engine API
 from sphere_engine.exceptions import SphereEngineException
 from .base import AbstractApi
 import six
+import sys
 from datetime import datetime
 
 class ProblemsApiV4Problems(AbstractApi):
@@ -847,7 +848,7 @@ class ProblemsApiV4Submissions(AbstractApi):
 class ProblemsApiV4Widgets(AbstractApi):
 
     def create(self, name, problem_id, default_language,
-               grade_mode=None, date_from=None, date_to=None, source_code_template='', max_submissions=None, session_duration=None,
+               grade_mode=None, date_from=None, date_to=None, source_code_template=None, max_submissions=None, session_duration=None,
                show_ranking=True, show_user_data_on_ranking=False, show_welcome_form=False, secure_by_oauth=False,
                display_test_cases_results=False, display_output=False, hide_submission_results=False,
                default_tab='problem', languages=None):
@@ -857,7 +858,7 @@ class ProblemsApiV4Widgets(AbstractApi):
         :param name: Widget name
         :type name: string
         :param problem_id: problem id
-        :type problem_id: integer
+        :type problem_id: integer|string
         :param default_language: Default language selected in the widget
         :type default_language: integer
 
@@ -902,8 +903,8 @@ class ProblemsApiV4Widgets(AbstractApi):
         # required parameters
         if not isinstance(name, str):
             raise ValueError('name should be str')
-        if not isinstance(problem_id, int):
-            raise ValueError('problem_id should be int')
+        if not isinstance(problem_id, int) and not isinstance(problem_id, str):
+            raise ValueError('problem_id should be int or string')
         if not isinstance(default_language, int):
             raise ValueError('default_language should be int')
 
@@ -914,7 +915,7 @@ class ProblemsApiV4Widgets(AbstractApi):
         else:
             grade_mode = 'auto'
 
-        # YYYY-MM-DD HH:MM:SS UTC
+        # utc datetime
         if (date_from is not None) and not isinstance(date_from, datetime):
             raise ValueError('date_time should be datetime.datetime object')
         if (date_to is not None) and not isinstance(date_to, datetime):
@@ -966,19 +967,19 @@ class ProblemsApiV4Widgets(AbstractApi):
             'problem_id': problem_id,
             'default_language': default_language,
             'grade_mode': grade_mode,
-            'source_code_template': source_code_template,
             'default_tab': default_tab,
         }
+        if source_code_template is not None:
+            post_params['source_code_template'] = source_code_template
         if max_submissions is not None:
             post_params['max_submissions'] = max_submissions
         if session_duration is not None:
             post_params['session_duration'] = session_duration
 
         if date_from is not None:
-            post_params['date_from'] = date_from.strftime('%Y-%m-%d %H:%M:%S UTC')
-            pass
+            post_params['date_from'] = date_from.strftime('%Y-%m-%d %H:%M:%S +00:00')
         if date_to is not None:
-            post_params['date_to'] = date_to.strftime('%Y-%m-%d %H:%M:%S UTC')
+            post_params['date_to'] = date_to.strftime('%Y-%m-%d %H:%M:%S +00:00')
 
         _dict = {'show_ranking': show_ranking,
                  'show_user_data_on_ranking': show_user_data_on_ranking,
