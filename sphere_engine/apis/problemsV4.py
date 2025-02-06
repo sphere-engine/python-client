@@ -697,7 +697,7 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         return response
     
-    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
+    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -712,14 +712,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
+        :param execution_mode: execution mode (isolated|fast)
+        :type execution_mode: string
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, source, compiler_id, priority, {}, tests, compiler_version_id)
+        return self.__create(problem_id, source, compiler_id, priority, {}, tests, compiler_version_id, execution_mode)
         
-    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
+    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
         """ Create a new submission with multi files
 
         :param problem_id: problem id (or code)
@@ -734,14 +736,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
+        :param execution_mode: execution mode (isolated|fast)
+        :type execution_mode: string
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, '', compiler_id, priority, files, tests, compiler_version_id)
+        return self.__create(problem_id, '', compiler_id, priority, files, tests, compiler_version_id, execution_mode)
 
-    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[], compiler_version_id=None):
+    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
         """ Create a new submission from tar source
 
         :param problem_id: problem id (or code)
@@ -756,14 +760,16 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
+        :param execution_mode: execution mode (isolated|fast)
+        :type execution_mode: string
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
         """
         
-        return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests, compiler_version_id)
+        return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests, compiler_version_id, execution_mode)
         
-    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[], compiler_version_id=None):
+    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[], compiler_version_id=None, execution_mode='isolated'):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -780,6 +786,8 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
+        :param execution_mode: execution mode (isolated|fast)
+        :type execution_mode: string
         :returns: id of created submission
         :rtype: json
         :raises SphereEngineException
@@ -791,7 +799,8 @@ class ProblemsApiV4Submissions(AbstractApi):
         post_params = {
             'problemId': problem_id,
             'compilerId': compiler_id,
-            'source': source
+            'source': source,
+            'fastExecution': 1 if execution_mode == 'fast' else 0
         }
         files_params = {}
 
@@ -806,7 +815,7 @@ class ProblemsApiV4Submissions(AbstractApi):
             post_params['source'] = ''
 
         if len(tests):
-            post_params['tests'] = ','.join(tests);
+            post_params['tests'] = ','.join(tests)
 
         if compiler_version_id != None:
             post_params['compilerVersionId'] = compiler_version_id
