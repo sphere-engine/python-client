@@ -47,7 +47,7 @@ class ProblemsApiV4Problems(AbstractApi):
 
         return response
 
-    def create(self, name, masterjudge_id, body='', type_id=0, interactive=False, code=None, execution_mode: str = 'isolated'):
+    def create(self, name, masterjudge_id, body='', type_id=0, interactive=False, code=None, execution_mode = 'isolated'):
         """Create a new problem
 
         :param name: problem name
