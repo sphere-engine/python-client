@@ -690,7 +690,7 @@ class TestProblems(unittest.TestCase):
         mock_get.return_value = get_mock_data('problems/getSubmission/success')
 
         self.assertEqual(10, self.client.submissions.get(10)['id'])
-        self.assertEqual('isolated', self.client.submissions.get(10)['problem']['executionMode'])
+        self.assertEqual('isolated', self.client.submissions.get(10)['executionMode'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_method_nonexisting_submission(self, mock_get):
@@ -758,8 +758,8 @@ class TestProblems(unittest.TestCase):
         self.assertEqual(2, len(response['items']))
         self.assertIn('id', response['items'][0])
         self.assertIn('id', response['items'][1])
-        self.assertEqual('fast', response['items'][0]['problem']['executionMode'])
-        self.assertEqual('isolated', response['items'][1]['problem']['executionMode'])
+        self.assertEqual('fast', response['items'][0]['executionMode'])
+        self.assertEqual('isolated', response['items'][1]['executionMode'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submissions_method_nonexisting_submission(self, mock_get):
