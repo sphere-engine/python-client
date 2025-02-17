@@ -47,8 +47,8 @@ class ProblemsApiV4Problems(AbstractApi):
 
         return response
 
-    def create(self, name, masterjudge_id, body='', type_id=0, interactive=False, code=None):
-        """ Create a new problem
+    def create(self, name, masterjudge_id, body='', type_id=0, interactive=False, code=None, execution_mode = 'isolated'):
+        """Create a new problem
 
         :param name: problem name
         :type name: string
@@ -61,6 +61,8 @@ class ProblemsApiV4Problems(AbstractApi):
         :param interactive: interactive problem flag (default False)
         :type interactive: bool
         :param code: problem code
+        :type execution_mode: string
+        :param execution_mode: execution mode (isolated|fast) (default isolated)
         :type code: string
         :returns: code of created problem
         :rtype: json
@@ -79,12 +81,16 @@ class ProblemsApiV4Problems(AbstractApi):
         if type_id not in [0, 1, 2]:
             raise SphereEngineException('wrong type', 400)
 
+        if execution_mode not in ['isolated', 'fast']:
+            raise SphereEngineException('wrong execution mode', 400)
+
         post_params = {
             'name': name,
             'body': body,
             'typeId': type_id,
             'interactive': interactive,
-            'masterjudgeId': masterjudge_id
+            'masterjudgeId': masterjudge_id,
+            'executionMode': execution_mode
         }
 
         if code is not None:
@@ -127,7 +133,7 @@ class ProblemsApiV4Problems(AbstractApi):
         return response
 
     def update(self, _id, name=None, masterjudge_id=None, body=None, type_id=None, interactive=None,
-               active_testcases=None):
+               active_testcases=None, execution_mode=None):
         """ Update an existing problem
 
         :param _id: problem id
@@ -144,6 +150,8 @@ class ProblemsApiV4Problems(AbstractApi):
         :type interactive: bool
         :param active_testcases: list of active testcases IDs (default None)
         :type active_testcases: List[integer]
+        :param execution_mode: execution mode (isolated|fast) (default None)
+        :type execution_mode: string
         :returns: void
         :rtype: json
         :raises SphereEngineException
@@ -171,6 +179,12 @@ class ProblemsApiV4Problems(AbstractApi):
             if type_id not in [0,1,2]:
                 raise SphereEngineException('wrong type id', 400)
             post_params['typeId'] = type_id
+
+        if execution_mode != None:
+            if execution_mode not in ['isolated', 'fast']:
+                raise SphereEngineException('wrong execution mode', 400)
+            post_params['executionMode'] = execution_mode
+
         if interactive != None:
             post_params['interactive'] = 1 if interactive else 0
         if masterjudge_id != None:
@@ -712,7 +726,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast)
+        :param execution_mode: execution mode (isolated|fast) (default isolated)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -760,7 +774,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast)
+        :param execution_mode: execution mode (isolated|fast) (default isolated)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -786,7 +800,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast)
+        :param execution_mode: execution mode (isolated|fast) (default isolated)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -800,7 +814,6 @@ class ProblemsApiV4Submissions(AbstractApi):
             'problemId': problem_id,
             'compilerId': compiler_id,
             'source': source,
-            'fastExecution': 1 if execution_mode == 'fast' else 0
         }
         files_params = {}
 
@@ -819,6 +832,11 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         if compiler_version_id != None:
             post_params['compilerVersionId'] = compiler_version_id
+
+        if execution_mode is not None:
+            if execution_mode not in ['isolated', 'fast']:
+                raise SphereEngineException('executionMode should be isolated or fast', 400)
+            post_params['executionMode'] = execution_mode
 
         response = self.api_client.call_api(resource_path, method, {}, {}, {}, post_params, files_params)
 

@@ -84,6 +84,7 @@ class TestProblems(unittest.TestCase):
         self.assertEqual(10, problems['paging']['limit'])
         self.assertEqual(0, problems['paging']['offset'])
         self.assertNotIn('shortBody', problems['items'][0])
+        self.assertEqual('isolated', problems['items'][0]['executionMode'])
         self.assertIn('lastModified', problems['items'][0])
         self.assertIn('body', problems['items'][0]['lastModified'])
         self.assertIn('settings', problems['items'][0]['lastModified'])
@@ -113,6 +114,7 @@ class TestProblems(unittest.TestCase):
 
         problem = self.client.problems.get('TEST')
         self.assertEqual('TEST', problem['code'])
+        self.assertEqual('isolated', problem['executionMode'])
         self.assertNotIn('shortBody', problem)
         self.assertIn('lastModified', problem)
         self.assertIn('body', problem['lastModified'])
@@ -174,6 +176,16 @@ class TestProblems(unittest.TestCase):
 
         try:
             self.client.problems.create('Invalid problem code', None, code='!@#$%^')
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_problem_invalid_execution_mode(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/invalidExecutionMode')
+
+        try:
+            self.client.problems.create('CODE', None, code='!@#$%^', execution_mode='quick')
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
@@ -678,6 +690,7 @@ class TestProblems(unittest.TestCase):
         mock_get.return_value = get_mock_data('problems/getSubmission/success')
 
         self.assertEqual(10, self.client.submissions.get(10)['id'])
+        self.assertEqual('isolated', self.client.submissions.get(10)['executionMode'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submission_method_nonexisting_submission(self, mock_get):
@@ -745,6 +758,8 @@ class TestProblems(unittest.TestCase):
         self.assertEqual(2, len(response['items']))
         self.assertIn('id', response['items'][0])
         self.assertIn('id', response['items'][1])
+        self.assertEqual('fast', response['items'][0]['executionMode'])
+        self.assertEqual('isolated', response['items'][1]['executionMode'])
 
     @patch('sphere_engine.ApiClient.make_http_call')
     def test_get_submissions_method_nonexisting_submission(self, mock_get):
@@ -929,6 +944,17 @@ class TestProblems(unittest.TestCase):
             self.assertEqual(400, e.code)
 
     @patch('sphere_engine.ApiClient.make_http_call')
+    def test_create_submission_with_tar_source_method_invalid_execution_mode(self, mock_get):
+        mock_get.return_value = get_mock_data('exceptions/invalidExecutionMode')
+
+        invalid_execution_mode = 'quick'
+        try:
+            self.client.submissions.createWithTarSource('TEST', 'nonempty source', 1, compiler_version_id=1001, execution_mode=invalid_execution_mode)
+            self.fail("Sphere Engine Exception with 400 code expected")
+        except SphereEngineException as e:
+            self.assertEqual(400, e.code)
+
+    @patch('sphere_engine.ApiClient.make_http_call')
     def test_create_submission_with_tar_source_method_invalid_response(self, mock_get):
         mock_get.return_value = get_mock_data('problems/getSubmissions/invalid')
 
@@ -937,3 +963,4 @@ class TestProblems(unittest.TestCase):
             self.fail("Sphere Engine Exception with 400 code expected")
         except SphereEngineException as e:
             self.assertEqual(400, e.code)
+
