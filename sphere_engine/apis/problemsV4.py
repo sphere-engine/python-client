@@ -711,7 +711,7 @@ class ProblemsApiV4Submissions(AbstractApi):
 
         return response
     
-    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
+    def create(self, problem_id, source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode=None):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -726,7 +726,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast) (default isolated)
+        :param execution_mode: execution mode (isolated|fast) (default None)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -735,7 +735,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         
         return self.__create(problem_id, source, compiler_id, priority, {}, tests, compiler_version_id, execution_mode)
         
-    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
+    def createMultiFiles(self, problem_id, files, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode=None):
         """ Create a new submission with multi files
 
         :param problem_id: problem id (or code)
@@ -750,7 +750,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast)
+        :param execution_mode: execution mode (isolated|fast) (default None)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -759,7 +759,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         
         return self.__create(problem_id, '', compiler_id, priority, files, tests, compiler_version_id, execution_mode)
 
-    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode='isolated'):
+    def createWithTarSource(self, problem_id, tar_source, compiler_id=None, priority=None, tests=[], compiler_version_id=None, execution_mode=None):
         """ Create a new submission from tar source
 
         :param problem_id: problem id (or code)
@@ -774,7 +774,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast) (default isolated)
+        :param execution_mode: execution mode (isolated|fast) (default None)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
@@ -783,7 +783,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         
         return self.__create(problem_id, tar_source, compiler_id, priority, {}, tests, compiler_version_id, execution_mode)
         
-    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[], compiler_version_id=None, execution_mode='isolated'):
+    def __create(self, problem_id, source, compiler_id=None, priority=None, files={}, tests=[], compiler_version_id=None, execution_mode=None):
         """ Create a new submission
 
         :param problem_id: problem id (or code)
@@ -800,7 +800,7 @@ class ProblemsApiV4Submissions(AbstractApi):
         :type tests: list
         :param compiler_version_id: id of the compiler version (default: default for api v4)
         :type compiler_version_id: integer
-        :param execution_mode: execution mode (isolated|fast) (default isolated)
+        :param execution_mode: execution mode (isolated|fast) (default None)
         :type execution_mode: string
         :returns: id of created submission
         :rtype: json
